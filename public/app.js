@@ -1,18 +1,19 @@
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
-let participants =
-JSON.parse(localStorage.getItem("participants")) || [
-"ANDI","BUDI","SITI","RINA"
-];
-
-let rotation = 0;
+let participants = [];
 let forcedWinner = null;
+let rotation = 0;
 
-// ================= BIGGER TEXT =================
-ctx.font = "bold 22px Arial";
+// ================= LOAD DATA SERVER =================
+async function loadData(){
+const res = await fetch("/participants");
+participants = await res.json();
+drawWheel();
+renderList();
+}
 
-// ================= DRAW WHEEL =================
+// ================= DRAW WHEEL (BIG TEXT FIX) =================
 function drawWheel(){
 
 ctx.clearRect(0,0,600,600);
@@ -32,8 +33,8 @@ ctx.save();
 ctx.translate(300,300);
 ctx.rotate(i*angle + angle/2);
 
-// 🔥 BESARKAN NAMA
-ctx.font = "bold 26px Arial";
+// 🔥 BESARIN NAMA
+ctx.font = "bold 28px Arial";
 ctx.fillStyle = "#000";
 ctx.fillText(name,120,10);
 
@@ -42,25 +43,64 @@ ctx.restore();
 });
 }
 
-// ================= SPIN CONTROLLED =================
-function spin(){
+// ================= ADD PARTICIPANT (SYNC SERVER) =================
+async function addParticipant(){
 
-if(!forcedWinner){
-alert("SET PEMENANG DULU DI ADMIN!");
+const name = document.getElementById("nameInput").value;
+
+await fetch("/participants",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name})
+});
+
+document.getElementById("nameInput").value="";
+loadData();
+}
+
+// ================= SET WINNER (ADMIN PC) =================
+async function setWinner(){
+
+const name = document.getElementById("forceWinnerInput").value;
+
+await fetch("/winner",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name})
+});
+
+alert("WINNER SET: " + name);
+closeAdmin();
+}
+
+// ================= GET WINNER =================
+async function getWinner(){
+const res = await fetch("/winner");
+const data = await res.json();
+return data.forcedWinner;
+}
+
+// ================= SPIN (SYNC WINNER) =================
+async function spin(){
+
+const winner = await getWinner();
+
+if(!winner){
+alert("SET WINNER DULU DI ADMIN");
 return;
 }
 
-const index = participants.indexOf(forcedWinner);
+const index = participants.indexOf(winner);
 
 if(index === -1){
-alert("PEMENANG TIDAK ADA!");
+alert("WINNER TIDAK ADA DI LIST");
 return;
 }
 
 const angle = 360 / participants.length;
 
 const target =
-3600 + (360 - (index * angle) - angle / 2);
+3600 + (360 - (index * angle) - angle/2);
 
 rotation += target;
 
@@ -71,81 +111,45 @@ canvas.style.transform =
 `rotate(${rotation}deg)`;
 
 setTimeout(()=>{
-showWinner(forcedWinner);
+showWinner(winner);
 },45000);
 }
 
 // ================= WINNER =================
 function showWinner(name){
 document.getElementById("winnerName").innerText = name;
-document.getElementById("modalPrize").innerText =
-document.getElementById("prizeTitle").innerText;
 document.getElementById("winnerModal").style.display="flex";
-forcedWinner = null;
 }
 
-// ================= PARTICIPANT =================
-function addParticipant(){
-const input=document.getElementById("nameInput");
-participants.push(input.value.toUpperCase());
-localStorage.setItem("participants",JSON.stringify(participants));
-input.value="";
-drawWheel();
-renderList();
+// ================= RESET =================
+async function resetAll(){
+await fetch("/reset",{method:"POST"});
+loadData();
 }
 
-function renderList(){
-const list=document.getElementById("list");
-list.innerHTML="";
-participants.forEach((p,i)=>{
-list.innerHTML+=`<li>${p} <button onclick="remove(${i})">❌</button></li>`;
-});
+// ================= ADMIN =================
+function closeAdmin(){
+document.getElementById("adminPanel").style.display="none";
 }
 
-function remove(i){
-participants.splice(i,1);
-localStorage.setItem("participants",JSON.stringify(participants));
-drawWheel();
-renderList();
-}
-
-// ================= ADMIN CTRL + SHIFT =================
-document.addEventListener("keydown",function(e){
+document.addEventListener("keydown",(e)=>{
 if(e.ctrlKey && e.shiftKey && e.code==="KeyA"){
 document.getElementById("adminPanel").style.display="block";
 }
 });
 
-// ================= ADMIN 5X CLICK TITLE =================
-let clickCount = 0;
-document.getElementById("title").addEventListener("click",function(){
-clickCount++;
-if(clickCount >= 5){
+// ================= CLICK 5X TITLE =================
+let click=0;
+document.getElementById("title").addEventListener("click",()=>{
+click++;
+if(click>=5){
 document.getElementById("adminPanel").style.display="block";
-clickCount=0;
+click=0;
 }
-setTimeout(()=>clickCount=0,2000);
+setTimeout(()=>click=0,2000);
 });
-
-// ================= ADMIN FUNCTIONS =================
-function forceWinner(){
-forcedWinner = document.getElementById("forceWinnerInput").value.toUpperCase();
-alert("PEMENANG SET: " + forcedWinner);
-closeAdmin();
-}
-
-function resetParticipants(){
-participants=[];
-localStorage.removeItem("participants");
-drawWheel();
-renderList();
-}
-
-function closeAdmin(){
-document.getElementById("adminPanel").style.display="none";
-}
 
 // ================= INIT =================
 document.getElementById("spinBtn").addEventListener("click",spin);
-drawWheel();
-renderList();
+
+loadData();
