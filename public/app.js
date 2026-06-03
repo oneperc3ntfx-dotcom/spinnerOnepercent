@@ -2,7 +2,6 @@ const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
 let participants = [];
-let rotation = 0;
 
 // ================= LOAD DATA =================
 async function loadData(){
@@ -32,7 +31,6 @@ ctx.save();
 ctx.translate(300,300);
 ctx.rotate(i*angle + angle/2);
 
-// TEXT
 ctx.font = "bold 28px Arial";
 ctx.fillStyle = "#000";
 ctx.fillText(name,120,10);
@@ -49,7 +47,7 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN FIX FINAL 100% =================
+// ================= SPIN FINAL FIX =================
 async function spin(){
 
 const winner = await getWinner();
@@ -68,40 +66,35 @@ return;
 
 const total = participants.length;
 
-// 🎯 ukuran tiap segmen
-const segment = 360 / total;
+// 🎯 1 slice derajat
+const slice = 360 / total;
 
-// 🎯 center dari segmen winner
-const centerAngle = index * segment + segment / 2;
+// 🎯 posisi tengah winner
+const winnerAngle = index * slice + (slice / 2);
 
-// 🔥 FIX PENTING: arah wheel harus dibalik
-const correction = 360 - centerAngle;
+// 🔥 KUNCI UTAMA:
+// kita paksa winner tepat di 0° (atas pointer)
+const finalRotation = (360 * 10) + (360 - winnerAngle);
 
-// 🔥 tambahan spin biar dramatis
-const spins = 360 * 10;
-
-// 🎯 FINAL ROTATION ABSOLUTE (INI KUNCI FIX BUG)
-const finalRotation = spins + correction;
-
-// ❗ RESET STATE BIAR CLEAN (ANTI DRIFT BUG)
+// ❗ RESET STATE (ANTI BUG DRIFT)
 canvas.style.transition = "none";
 canvas.style.transform = "rotate(0deg)";
 canvas.getBoundingClientRect();
 
-// 🎬 START ANIMASI 45 DETIK
+// 🎬 START SPIN 45 DETIK
 canvas.style.transition =
 "transform 45s cubic-bezier(0.05,0.9,0.1,1)";
 
 canvas.style.transform =
 `rotate(${finalRotation}deg)`;
 
-// 🏆 SHOW WINNER SETELAH SELESAI
+// 🏆 SHOW WINNER
 setTimeout(()=>{
 showWinner(winner);
 },45000);
 }
 
-// ================= WINNER =================
+// ================= WINNER POPUP =================
 function showWinner(name){
 document.getElementById("winnerName").innerText = name;
 document.getElementById("winnerModal").style.display="flex";
@@ -133,7 +126,7 @@ body:JSON.stringify({name})
 loadData();
 }
 
-// ================= RENDER LIST =================
+// ================= RENDER =================
 function renderList(){
 const list=document.getElementById("list");
 list.innerHTML="";
