@@ -47,7 +47,6 @@ font-size:20px;
 cursor:pointer;
 }
 
-/* PARTICIPANTS */
 .participants{
 position:fixed;
 right:20px;
@@ -69,7 +68,6 @@ background:gold;
 border:none;
 }
 
-/* ADMIN */
 .admin-panel{
 position:fixed;
 top:50%;
@@ -83,7 +81,6 @@ display:none;
 z-index:999;
 }
 
-/* WINNER */
 #winnerModal{
 display:none;
 position:fixed;
