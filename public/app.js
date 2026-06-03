@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let participants = [];
 
-// ================= LOAD PARTICIPANTS =================
+// ================= LOAD DATA =================
 async function loadData(){
 const res = await fetch("/participants");
 participants = await res.json();
@@ -49,14 +49,14 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN FIX FINAL =================
+// ================= SPIN =================
 async function spin(){
 
 const winner = await getWinner();
 
-// 🎲 RANDOM MODE jika kosong
 let finalWinner = winner;
 
+// RANDOM MODE
 if(!finalWinner){
 const randomIndex = Math.floor(Math.random() * participants.length);
 finalWinner = participants[randomIndex];
@@ -70,44 +70,39 @@ return;
 }
 
 const total = participants.length;
-
-// 🎯 size per segment
 const slice = 360 / total;
 
-// 🎯 center winner
 const winnerAngle = index * slice + slice / 2;
-
-// 🚨 FIX POINTER (jam 12)
 const offset = 90;
 
-// 🎯 FINAL ROTATION AKURAT
 const finalRotation = (360 * 10) + (360 - winnerAngle - offset);
 
-// ❗ RESET ANIMASI
 canvas.style.transition = "none";
 canvas.style.transform = "rotate(0deg)";
 canvas.getBoundingClientRect();
 
-// 🎬 SPIN 45 DETIK
 canvas.style.transition =
 "transform 45s cubic-bezier(0.05,0.9,0.1,1)";
 
 canvas.style.transform =
 `rotate(${finalRotation}deg)`;
 
-// 🏆 SHOW WINNER
 setTimeout(()=>{
 showWinner(finalWinner);
 },45000);
 }
 
-// ================= WINNER POPUP =================
+// ================= WINNER =================
 function showWinner(name){
 document.getElementById("winnerName").innerText = name;
 document.getElementById("winnerModal").style.display="flex";
 }
 
-// ================= ADD PARTICIPANT =================
+function closeModal(){
+document.getElementById("winnerModal").style.display="none";
+}
+
+// ================= PARTICIPANTS =================
 async function addParticipant(){
 const name = document.getElementById("nameInput").value;
 
@@ -121,7 +116,6 @@ document.getElementById("nameInput").value="";
 loadData();
 }
 
-// ================= DELETE PARTICIPANT =================
 async function remove(name){
 
 await fetch("/participants",{
@@ -133,7 +127,6 @@ body:JSON.stringify({name})
 loadData();
 }
 
-// ================= RENDER LIST =================
 function renderList(){
 const list=document.getElementById("list");
 list.innerHTML="";
@@ -145,7 +138,7 @@ list.innerHTML+=`
 });
 }
 
-// ================= SET WINNER (STICKY UI) =================
+// ================= SET WINNER =================
 async function setWinner(){
 
 const input = document.getElementById("forceWinnerInput");
@@ -157,35 +150,27 @@ headers:{"Content-Type":"application/json"},
 body:JSON.stringify({name})
 });
 
-// 🔥 TIDAK DIHAPUS (biar nempel)
-if(name === ""){
-alert("MODE RANDOM AKTIF");
-}else{
-alert("WINNER LOCK: " + name.toUpperCase());
-}
-
-// sync UI
+alert(name ? "WINNER SET: " + name : "MODE RANDOM");
 loadWinnerUI();
 }
 
-// ================= LOAD WINNER UI =================
+// ================= WINNER UI SYNC =================
 async function loadWinnerUI(){
 const res = await fetch("/winner");
 const data = await res.json();
 
 const input = document.getElementById("forceWinnerInput");
 
-if(data.forcedWinner && data.forcedWinner !== ""){
-input.value = data.forcedWinner;
-}else{
-input.value = ""; // random mode
-}
+input.value = data.forcedWinner || "";
 }
 
-// ================= RESET =================
-async function resetAll(){
-await fetch("/reset",{method:"POST"});
-loadData();
+// ================= HIDE / SHOW PANEL =================
+function hideParticipants(){
+document.getElementById("participantsPanel").style.display = "none";
+}
+
+function showParticipants(){
+document.getElementById("participantsPanel").style.display = "block";
 }
 
 // ================= ADMIN =================
