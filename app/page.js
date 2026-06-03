@@ -59,7 +59,7 @@ export default function Home() {
     <main
       style={{
         minHeight: "100vh",
-        background: "radial-gradient(circle at center,#141414,#000)",
+        background: "radial-gradient(circle at center,#111,#000)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -94,56 +94,51 @@ export default function Home() {
           marginTop: 10,
           marginBottom: 30,
           textAlign: "center",
-          fontSize: 42,
+          fontSize: 40,
           fontWeight: 900,
-          borderRadius: 20,
+          borderRadius: 18,
           border: "2px solid #D4AF37",
           background: "#111",
           color: "#fff",
-          padding: 15,
+          padding: 14,
           outline: "none",
         }}
       />
 
-      {/* WHEEL CONTAINER */}
-      <div
-        style={{
-          position: "relative",
-          width: 750,
-          height: 750,
-        }}
-      >
-        {/* POINTER (RED + CLEAN) */}
+      {/* WHEEL */}
+      <div style={{ position: "relative", width: 750, height: 750 }}>
+        
+        {/* POINTER RED (FIXED) */}
         <div
           style={{
             position: "absolute",
-            top: -55,
+            top: -50,
             left: "50%",
             transform: "translateX(-50%)",
             width: 0,
             height: 0,
-            borderLeft: "22px solid transparent",
-            borderRight: "22px solid transparent",
+            borderLeft: "20px solid transparent",
+            borderRight: "20px solid transparent",
             borderTop: "70px solid #ff2d2d",
             zIndex: 999,
             filter: "drop-shadow(0 0 10px red)",
           }}
         />
 
-        {/* CENTER DOT (SMALL & PERFECT CENTER) */}
+        {/* CENTER DOT (PERFECT CENTER SMALL) */}
         <div
           style={{
             position: "absolute",
             left: "50%",
             top: "50%",
             transform: "translate(-50%,-50%)",
-            width: 45,
-            height: 45,
+            width: 40,
+            height: 40,
             borderRadius: "50%",
             background: "#111",
-            border: "5px solid #D4AF37",
+            border: "4px solid #D4AF37",
             zIndex: 999,
-            boxShadow: "0 0 20px rgba(212,175,55,.6)",
+            boxShadow: "0 0 15px rgba(212,175,55,.7)",
           }}
         />
 
@@ -153,17 +148,16 @@ export default function Home() {
             width: "100%",
             height: "100%",
             borderRadius: "50%",
-            overflow: "hidden",
             position: "relative",
             transform: `rotate(${rotation}deg)`,
             transition: "transform 6s cubic-bezier(.12,.8,.12,1)",
             border: "12px solid #D4AF37",
-            boxShadow: "0 0 70px rgba(212,175,55,.6)",
-            background: "radial-gradient(circle,#f7d46a,#d4af37)",
+            boxShadow: "0 0 80px rgba(212,175,55,.5)",
+            overflow: "hidden",
           }}
         >
           {participants.map((name, i) => {
-            const angle = i * sliceAngle;
+            const angle = sliceAngle;
 
             return (
               <div
@@ -172,10 +166,10 @@ export default function Home() {
                   position: "absolute",
                   width: "50%",
                   height: "50%",
-                  left: "50%",
                   top: "50%",
+                  left: "50%",
                   transformOrigin: "0% 0%",
-                  transform: `rotate(${angle}deg)`,
+                  transform: `rotate(${i * angle}deg)`,
                 }}
               >
                 {/* SEGMENT */}
@@ -185,28 +179,27 @@ export default function Home() {
                     width: "200%",
                     height: "200%",
                     background: i % 2 === 0 ? "#f7d46a" : "#d4af37",
-                    clipPath: "polygon(0 0, 50% 0, 50% 50%)",
-                    border: "1px solid rgba(0,0,0,.15)",
+                    clipPath: "polygon(0 0, 100% 0, 50% 50%)",
                   }}
                 />
 
-                {/* TEXT FOLLOW ARC */}
+                {/* TEXT CLEAN FOLLOW ARC */}
                 <div
                   style={{
                     position: "absolute",
-                    left: 120,
-                    top: 120,
+                    left: 0,
+                    top: 0,
+                    width: 200,
+                    textAlign: "center",
                     transform: `
-                      rotate(${sliceAngle / 2}deg)
-                      translateY(-220px)
+                      rotate(${angle / 2}deg)
+                      translateY(-170px)
                       rotate(90deg)
                     `,
-                    transformOrigin: "center",
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: 900,
                     color: "#111",
                     whiteSpace: "nowrap",
-                    textShadow: "0 1px 2px rgba(255,255,255,.3)",
                   }}
                 >
                   {name}
@@ -223,20 +216,20 @@ export default function Home() {
         disabled={spinning}
         style={{
           marginTop: 35,
-          padding: "18px 65px",
+          padding: "18px 60px",
           fontSize: 26,
           fontWeight: 900,
           border: "none",
           borderRadius: 14,
           background: "#D4AF37",
           cursor: "pointer",
-          boxShadow: "0 0 30px rgba(212,175,55,.5)",
+          boxShadow: "0 0 25px rgba(212,175,55,.5)",
         }}
       >
         {spinning ? "SPINNING..." : "SPIN NOW"}
       </button>
 
-      {/* PANEL PESERTA (UNCHANGED STYLE) */}
+      {/* PANEL PESERTA */}
       <div
         style={{
           position: "fixed",
@@ -300,7 +293,7 @@ export default function Home() {
         ))}
       </div>
 
-      {/* 🎉 WINNER POPUP (TIDAK DIUBAH SAMA SEKALI) */}
+      {/* POPUP PEMENANG (TIDAK DIUBAH SAMA SEKALI) */}
       {winner && (
         <div
           style={{
