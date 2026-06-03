@@ -14,6 +14,7 @@ renderList();
 
 // ================= DRAW WHEEL =================
 function drawWheel(){
+
 ctx.clearRect(0,0,600,600);
 
 const angle = (2*Math.PI)/participants.length;
@@ -48,7 +49,7 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN FIX FINAL =================
+// ================= SPIN FIX FINAL 100% =================
 async function spin(){
 
 const winner = await getWinner();
@@ -67,37 +68,34 @@ return;
 
 const total = participants.length;
 
-// 🎯 tiap segment
+// 🎯 ukuran tiap segmen
 const segment = 360 / total;
 
-// 🎯 center dari winner
-const winnerCenter = index * segment + segment / 2;
+// 🎯 center dari segmen winner
+const centerAngle = index * segment + segment / 2;
 
-// 🔥 pointer di atas (0°)
-const pointer = 0;
+// 🔥 FIX PENTING: arah wheel harus dibalik
+const correction = 360 - centerAngle;
 
-// 🔥 koreksi arah wheel
-const normalized = 360 - winnerCenter + pointer;
+// 🔥 tambahan spin biar dramatis
+const spins = 360 * 10;
 
-// 🔥 tambahan spin
-const extra = 360 * 8;
+// 🎯 FINAL ROTATION ABSOLUTE (INI KUNCI FIX BUG)
+const finalRotation = spins + correction;
 
-// 🎯 FINAL ROTATION (FIX UTAMA)
-const finalRotation = extra + normalized;
-
-// ❗ RESET ANIMASI BIAR CLEAN
+// ❗ RESET STATE BIAR CLEAN (ANTI DRIFT BUG)
 canvas.style.transition = "none";
 canvas.style.transform = "rotate(0deg)";
-canvas.offsetHeight;
+canvas.getBoundingClientRect();
 
-// 🎬 START SPIN 45 DETIK
+// 🎬 START ANIMASI 45 DETIK
 canvas.style.transition =
 "transform 45s cubic-bezier(0.05,0.9,0.1,1)";
 
 canvas.style.transform =
 `rotate(${finalRotation}deg)`;
 
-// 🏆 SHOW WINNER AFTER FINISH
+// 🏆 SHOW WINNER SETELAH SELESAI
 setTimeout(()=>{
 showWinner(winner);
 },45000);
@@ -125,6 +123,7 @@ loadData();
 
 // ================= DELETE =================
 async function remove(name){
+
 await fetch("/participants",{
 method:"DELETE",
 headers:{"Content-Type":"application/json"},
