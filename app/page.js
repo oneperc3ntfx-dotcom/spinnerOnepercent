@@ -24,7 +24,6 @@ export default function Home() {
 
   const addParticipant = () => {
     if (!input.trim()) return;
-
     setParticipants([...participants, input.trim().toUpperCase()]);
     setInput("");
   };
@@ -39,20 +38,14 @@ export default function Home() {
     setWinner("");
     setSpinning(true);
 
-    const randomIndex = Math.floor(
-      Math.random() * participants.length
-    );
+    const randomIndex = Math.floor(Math.random() * participants.length);
 
     const anglePerSlice = 360 / participants.length;
 
     const stopAngle =
-      360 -
-      (randomIndex * anglePerSlice + anglePerSlice / 2);
+      360 - (randomIndex * anglePerSlice + anglePerSlice / 2);
 
-    const totalRotation =
-      rotation +
-      360 * 8 +
-      stopAngle;
+    const totalRotation = rotation + 360 * 8 + stopAngle;
 
     setRotation(totalRotation);
 
@@ -66,8 +59,7 @@ export default function Home() {
     <main
       style={{
         minHeight: "100vh",
-        background:
-          "radial-gradient(circle at center,#181818,#000)",
+        background: "radial-gradient(circle at center,#141414,#000)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -76,6 +68,7 @@ export default function Home() {
         overflow: "hidden",
       }}
     >
+      {/* TITLE */}
       <input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -91,6 +84,7 @@ export default function Home() {
         }}
       />
 
+      {/* SUBTITLE */}
       <input
         value={subtitle}
         onChange={(e) => setSubtitle(e.target.value)}
@@ -103,7 +97,7 @@ export default function Home() {
           fontSize: 42,
           fontWeight: 900,
           borderRadius: 20,
-          border: "3px solid #D4AF37",
+          border: "2px solid #D4AF37",
           background: "#111",
           color: "#fff",
           padding: 15,
@@ -111,6 +105,7 @@ export default function Home() {
         }}
       />
 
+      {/* WHEEL CONTAINER */}
       <div
         style={{
           position: "relative",
@@ -118,7 +113,7 @@ export default function Home() {
           height: 750,
         }}
       >
-        {/* JARUM */}
+        {/* POINTER (RED + CLEAN) */}
         <div
           style={{
             position: "absolute",
@@ -127,27 +122,28 @@ export default function Home() {
             transform: "translateX(-50%)",
             width: 0,
             height: 0,
-            borderLeft: "35px solid transparent",
-            borderRight: "35px solid transparent",
-            borderTop: "90px solid #D4AF37",
+            borderLeft: "22px solid transparent",
+            borderRight: "22px solid transparent",
+            borderTop: "70px solid #ff2d2d",
             zIndex: 999,
-            filter: "drop-shadow(0 0 10px gold)",
+            filter: "drop-shadow(0 0 10px red)",
           }}
         />
 
-        {/* TENGAH */}
+        {/* CENTER DOT (SMALL & PERFECT CENTER) */}
         <div
           style={{
             position: "absolute",
             left: "50%",
             top: "50%",
             transform: "translate(-50%,-50%)",
-            width: 80,
-            height: 80,
+            width: 45,
+            height: 45,
             borderRadius: "50%",
             background: "#111",
-            border: "8px solid #D4AF37",
+            border: "5px solid #D4AF37",
             zIndex: 999,
+            boxShadow: "0 0 20px rgba(212,175,55,.6)",
           }}
         />
 
@@ -160,17 +156,14 @@ export default function Home() {
             overflow: "hidden",
             position: "relative",
             transform: `rotate(${rotation}deg)`,
-            transition:
-              "transform 6s cubic-bezier(.12,.8,.12,1)",
-            border: "15px solid #D4AF37",
-            boxShadow:
-              "0 0 60px rgba(212,175,55,.8)",
-            background:
-              "radial-gradient(circle,#f7d46a,#d4af37)",
+            transition: "transform 6s cubic-bezier(.12,.8,.12,1)",
+            border: "12px solid #D4AF37",
+            boxShadow: "0 0 70px rgba(212,175,55,.6)",
+            background: "radial-gradient(circle,#f7d46a,#d4af37)",
           }}
         >
           {participants.map((name, i) => {
-            const start = i * sliceAngle;
+            const angle = i * sliceAngle;
 
             return (
               <div
@@ -182,36 +175,38 @@ export default function Home() {
                   left: "50%",
                   top: "50%",
                   transformOrigin: "0% 0%",
-                  transform: `rotate(${start}deg) skewY(${
-                    90 - sliceAngle
-                  }deg)`,
-                  background:
-                    i % 2 === 0
-                      ? "#f7d46a"
-                      : "#d4af37",
-                  border:
-                    "1px solid rgba(0,0,0,.2)",
+                  transform: `rotate(${angle}deg)`,
                 }}
               >
+                {/* SEGMENT */}
                 <div
                   style={{
                     position: "absolute",
-                    left: 180,
-                    top: 90,
+                    width: "200%",
+                    height: "200%",
+                    background: i % 2 === 0 ? "#f7d46a" : "#d4af37",
+                    clipPath: "polygon(0 0, 50% 0, 50% 50%)",
+                    border: "1px solid rgba(0,0,0,.15)",
+                  }}
+                />
 
+                {/* TEXT FOLLOW ARC */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 120,
+                    top: 120,
                     transform: `
-                      skewY(-${90 - sliceAngle}deg)
                       rotate(${sliceAngle / 2}deg)
+                      translateY(-220px)
+                      rotate(90deg)
                     `,
-
-                    width: 250,
-
-                    fontSize: 24,
+                    transformOrigin: "center",
+                    fontSize: 22,
                     fontWeight: 900,
-
                     color: "#111",
-
                     whiteSpace: "nowrap",
+                    textShadow: "0 1px 2px rgba(255,255,255,.3)",
                   }}
                 >
                   {name}
@@ -222,24 +217,26 @@ export default function Home() {
         </div>
       </div>
 
+      {/* BUTTON */}
       <button
         onClick={spin}
         disabled={spinning}
         style={{
           marginTop: 35,
-          padding: "20px 70px",
-          fontSize: 28,
+          padding: "18px 65px",
+          fontSize: 26,
           fontWeight: 900,
           border: "none",
-          borderRadius: 15,
+          borderRadius: 14,
           background: "#D4AF37",
           cursor: "pointer",
+          boxShadow: "0 0 30px rgba(212,175,55,.5)",
         }}
       >
         {spinning ? "SPINNING..." : "SPIN NOW"}
       </button>
 
-      {/* PANEL PESERTA */}
+      {/* PANEL PESERTA (UNCHANGED STYLE) */}
       <div
         style={{
           position: "fixed",
@@ -254,9 +251,7 @@ export default function Home() {
       >
         <input
           value={input}
-          onChange={(e) =>
-            setInput(e.target.value)
-          }
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Tambah peserta"
           style={{
             width: "100%",
@@ -285,17 +280,13 @@ export default function Home() {
             key={i}
             style={{
               display: "flex",
-              justifyContent:
-                "space-between",
+              justifyContent: "space-between",
               marginBottom: 6,
             }}
           >
             <span>{p}</span>
-
             <button
-              onClick={() =>
-                removeParticipant(p)
-              }
+              onClick={() => removeParticipant(p)}
               style={{
                 background: "red",
                 color: "#fff",
@@ -309,14 +300,13 @@ export default function Home() {
         ))}
       </div>
 
-      {/* POPUP PEMENANG */}
+      {/* 🎉 WINNER POPUP (TIDAK DIUBAH SAMA SEKALI) */}
       {winner && (
         <div
           style={{
             position: "fixed",
             inset: 0,
-            background:
-              "rgba(0,0,0,.94)",
+            background: "rgba(0,0,0,.94)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -329,20 +319,11 @@ export default function Home() {
               padding: 70,
               borderRadius: 30,
               background: "#111",
-              border:
-                "3px solid #D4AF37",
-              boxShadow:
-                "0 0 120px #D4AF37",
+              border: "3px solid #D4AF37",
+              boxShadow: "0 0 120px #D4AF37",
             }}
           >
-            <div
-              style={{
-                fontSize: 90,
-                marginBottom: 10,
-              }}
-            >
-              🏆
-            </div>
+            <div style={{ fontSize: 90, marginBottom: 10 }}>🏆</div>
 
             <div
               style={{
@@ -371,34 +352,24 @@ export default function Home() {
                 fontSize: 130,
                 fontWeight: 900,
                 color: "#D4AF37",
-                textShadow:
-                  "0 0 40px #D4AF37",
+                textShadow: "0 0 40px #D4AF37",
               }}
             >
               {winner}
             </div>
 
-            <div
-              style={{
-                marginTop: 30,
-                fontSize: 60,
-              }}
-            >
+            <div style={{ marginTop: 30, fontSize: 60 }}>
               🎉 🎊 🎉
             </div>
 
             <button
-              onClick={() =>
-                setWinner("")
-              }
+              onClick={() => setWinner("")}
               style={{
                 marginTop: 30,
-                padding:
-                  "15px 45px",
+                padding: "15px 45px",
                 border: "none",
                 borderRadius: 12,
-                background:
-                  "#D4AF37",
+                background: "#D4AF37",
                 fontWeight: 900,
                 cursor: "pointer",
               }}
