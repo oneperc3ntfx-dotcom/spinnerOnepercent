@@ -11,26 +11,17 @@ padding:20px;
 }
 
 h1{
-color:#f2c94c;
+color:gold;
 font-size:60px;
-text-shadow:0 0 20px gold;
 cursor:pointer;
 }
 
-/* PRIZE */
-.prize-box input{
-padding:10px;
-width:250px;
+#wheel{
+border-radius:50%;
+box-shadow:0 0 40px gold;
+transition:transform 45s cubic-bezier(0.05,0.9,0.1,1);
 }
 
-.prize-box button{
-padding:10px 20px;
-background:gold;
-border:none;
-cursor:pointer;
-}
-
-/* WHEEL */
 .wheel-wrapper{
 position:relative;
 width:600px;
@@ -45,13 +36,6 @@ transform:translateX(-50%);
 border-left:15px solid transparent;
 border-right:15px solid transparent;
 border-top:40px solid red;
-z-index:10;
-}
-
-#wheel{
-border-radius:50%;
-box-shadow:0 0 30px gold;
-transition:transform 45s cubic-bezier(0.05,0.9,0.1,1);
 }
 
 #spinBtn{
@@ -71,7 +55,6 @@ top:100px;
 background:#111;
 padding:10px;
 width:250px;
-border:1px solid gold;
 }
 
 .participants input{
@@ -84,28 +67,6 @@ width:100%;
 margin-top:5px;
 background:gold;
 border:none;
-padding:10px;
-}
-
-#winnerModal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.9);
-justify-content:center;
-align-items:center;
-}
-
-.modal-content{
-background:#111;
-padding:40px;
-border:2px solid gold;
-text-align:center;
-}
-
-.modal-content h1{
-font-size:80px;
-color:gold;
 }
 
 /* ADMIN */
@@ -119,25 +80,20 @@ border:2px solid gold;
 padding:20px;
 width:300px;
 display:none;
-z-index:9999;
+z-index:999;
 }
 
-.admin-panel h2{
+/* WINNER */
+#winnerModal{
+display:none;
+position:fixed;
+inset:0;
+background:black;
+justify-content:center;
+align-items:center;
+}
+
+#winnerName{
+font-size:80px;
 color:gold;
-text-align:center;
-}
-
-.admin-panel input{
-width:100%;
-padding:10px;
-margin:10px 0;
-}
-
-.admin-panel button{
-width:100%;
-padding:10px;
-margin-top:5px;
-background:gold;
-border:none;
-cursor:pointer;
 }
