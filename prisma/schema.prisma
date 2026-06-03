@@ -1,0 +1,27 @@
+generator client {
+ provider = "prisma-client-js"
+}
+
+datasource db {
+ provider = "postgresql"
+ url      = env("DATABASE_URL")
+}
+
+model Participant {
+ id        Int      @id @default(autoincrement())
+ name      String
+ createdAt DateTime @default(now())
+}
+
+model Winner {
+ id        Int      @id @default(autoincrement())
+ name      String
+ prize     String?
+ createdAt DateTime @default(now())
+}
+
+model Setting {
+ id            Int @id @default(1)
+ title         String
+ forcedWinner  String?
+}
