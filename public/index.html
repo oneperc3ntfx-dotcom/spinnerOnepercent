@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Luxury Spinner</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div class="container">
+
+    <h1>LUXURY SPINNER</h1>
+
+    <div class="prize-box">
+
+        <input
+            id="prizeInput"
+            placeholder="Masukkan Nama Hadiah">
+
+        <button onclick="savePrize()">
+            SIMPAN
+        </button>
+
+    </div>
+
+    <h2 id="prizeTitle">
+        HADIAH 1 JUTA
+    </h2>
+
+    <div class="wheel-wrapper">
+
+        <div class="pointer"></div>
+
+        <canvas
+            id="wheel"
+            width="600"
+            height="600">
+        </canvas>
+
+    </div>
+
+    <button
+        id="spinBtn">
+        SPIN NOW
+    </button>
+
+</div>
+
+<div class="participants">
+
+    <input
+        id="nameInput"
+        placeholder="Tambah peserta">
+
+    <button onclick="addParticipant()">
+        ADD
+    </button>
+
+    <ul id="list"></ul>
+
+</div>
+
+<div id="winnerModal">
+
+    <div class="modal-content">
+
+        🏆
+
+        <h3>
+            SELAMAT KAMU MEMENANGKAN
+        </h3>
+
+        <h2 id="modalPrize"></h2>
+
+        <h1 id="winnerName"></h1>
+
+        <button onclick="closeModal()">
+            TUTUP
+        </button>
+
+    </div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
