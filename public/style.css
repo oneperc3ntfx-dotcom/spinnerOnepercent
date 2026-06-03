@@ -14,8 +14,10 @@ h1{
 color:#f2c94c;
 font-size:60px;
 text-shadow:0 0 20px gold;
+cursor:pointer;
 }
 
+/* PRIZE */
 .prize-box input{
 padding:10px;
 width:250px;
@@ -28,12 +30,7 @@ border:none;
 cursor:pointer;
 }
 
-#wheel{
-border-radius:50%;
-box-shadow:0 0 30px gold;
-transition:transform 45s cubic-bezier(0.05,0.9,0.1,1);
-}
-
+/* WHEEL */
 .wheel-wrapper{
 position:relative;
 width:600px;
@@ -48,6 +45,13 @@ transform:translateX(-50%);
 border-left:15px solid transparent;
 border-right:15px solid transparent;
 border-top:40px solid red;
+z-index:10;
+}
+
+#wheel{
+border-radius:50%;
+box-shadow:0 0 30px gold;
+transition:transform 45s cubic-bezier(0.05,0.9,0.1,1);
 }
 
 #spinBtn{
@@ -59,6 +63,7 @@ font-size:20px;
 cursor:pointer;
 }
 
+/* PARTICIPANTS */
 .participants{
 position:fixed;
 right:20px;
