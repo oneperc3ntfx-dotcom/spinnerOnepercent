@@ -8,9 +8,8 @@ JSON.parse(localStorage.getItem("participants")) || [
 
 let rotation = 0;
 
-// ================= INIT =================
-drawWheel();
-renderList();
+// ================= ADMIN SELECTED WINNER =================
+let forcedWinner = null;
 
 // ================= SAVE PRIZE =================
 function savePrize(){
@@ -44,18 +43,31 @@ ctx.restore();
 });
 }
 
-// ================= SPIN 45 DETIK =================
+// ================= SPIN CONTROLLED =================
 function spin(){
 
 if(participants.length === 0) return;
 
-const winnerIndex =
-Math.floor(Math.random()*participants.length);
+// kalau admin belum set
+if(!forcedWinner){
+alert("SET PEMENANG DI ADMIN DULU!");
+return;
+}
 
-const angle = 360/participants.length;
+// cari index dari forced winner
+const winnerIndex = participants.indexOf(forcedWinner);
 
+// kalau nama tidak ada
+if(winnerIndex === -1){
+alert("PEMENANG TIDAK ADA DI DAFTAR!");
+return;
+}
+
+const angle = 360 / participants.length;
+
+// target posisi (HARUS PAS DI WINNER)
 const target =
-3600 + (360 - (winnerIndex*angle) - angle/2);
+3600 + (360 - (winnerIndex * angle) - angle / 2);
 
 rotation += target;
 
@@ -65,20 +77,39 @@ canvas.style.transition =
 canvas.style.transform =
 `rotate(${rotation}deg)`;
 
+// popup muncul SETELAH spin selesai
 setTimeout(()=>{
-showWinner(participants[winnerIndex]);
+showWinner(forcedWinner);
 },45000);
+}
+
+// ================= SET WINNER ADMIN =================
+function forceWinner(){
+const name =
+document.getElementById("forceWinnerInput").value.toUpperCase();
+
+if(!name) return;
+
+forcedWinner = name;
+
+// simpan sementara
+localStorage.setItem("forcedWinner", name);
+
+alert("PEMENANG DI SET: " + name);
+
+closeAdmin();
 }
 
 // ================= WINNER =================
 function showWinner(name){
-
 document.getElementById("winnerName").innerText = name;
-
 document.getElementById("modalPrize").innerText =
 document.getElementById("prizeTitle").innerText;
-
 document.getElementById("winnerModal").style.display="flex";
+
+// reset setelah menang
+forcedWinner = null;
+localStorage.removeItem("forcedWinner");
 }
 
 function closeModal(){
@@ -88,9 +119,13 @@ document.getElementById("winnerModal").style.display="none";
 // ================= PARTICIPANTS =================
 function addParticipant(){
 const input = document.getElementById("nameInput");
+
 participants.push(input.value.toUpperCase());
+
 localStorage.setItem("participants",JSON.stringify(participants));
+
 input.value="";
+
 drawWheel();
 renderList();
 }
@@ -112,31 +147,19 @@ drawWheel();
 renderList();
 }
 
-// ================= ADMIN FIX (INI YANG BENAR) =================
+// ================= ADMIN PANEL =================
 document.addEventListener("keydown", function(e){
-
 if(e.ctrlKey && e.shiftKey && e.code === "KeyA"){
 document.getElementById("adminPanel").style.display = "block";
-console.log("ADMIN OPEN");
 }
-
 });
 
 function closeAdmin(){
 document.getElementById("adminPanel").style.display="none";
 }
 
-function forceWinner(){
-const name=document.getElementById("forceWinnerInput").value;
-showWinner(name.toUpperCase());
-}
+// ================= INIT =================
+document.getElementById("spinBtn").addEventListener("click",spin);
 
-function resetParticipants(){
-participants=[];
-localStorage.removeItem("participants");
 drawWheel();
 renderList();
-}
-
-// ================= BUTTON =================
-document.getElementById("spinBtn").addEventListener("click",spin);
