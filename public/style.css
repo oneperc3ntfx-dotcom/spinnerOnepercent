@@ -1,275 +1,149 @@
 body{
 margin:0;
-background:
-radial-gradient(circle at top, #111 0%, #050505 60%, #000 100%);
-font-family:Arial,sans-serif;
+background:radial-gradient(circle,#111,#050505);
+font-family:Arial;
 color:white;
-overflow-x:hidden;
 }
 
-/* ===================== CONTAINER ===================== */
 .container{
 text-align:center;
 padding:20px;
 }
 
-/* ===================== TITLE ===================== */
 h1{
 color:#f2c94c;
 font-size:70px;
-text-shadow:
-0 0 10px #ffd700,
-0 0 30px #d4af37,
-0 0 60px rgba(255,215,0,0.4);
-letter-spacing:3px;
-margin-bottom:10px;
+text-shadow:0 0 20px gold;
 }
 
-/* ===================== PRIZE ===================== */
-.prize-box{
-margin:20px;
-}
-
+/* PRIZE */
 .prize-box input{
-padding:12px;
-width:300px;
-border-radius:10px;
-border:none;
-outline:none;
-text-align:center;
-font-weight:bold;
+padding:10px;
+width:250px;
 }
 
 .prize-box button{
-padding:12px 20px;
-background:linear-gradient(180deg,#ffd700,#b8860b);
+padding:10px 20px;
+background:gold;
 border:none;
 cursor:pointer;
-font-weight:bold;
-border-radius:10px;
-transition:0.3s;
 }
 
-.prize-box button:hover{
-transform:scale(1.05);
-}
-
-/* ===================== PRIZE TEXT ===================== */
-#prizeTitle{
-color:#fff;
-font-size:42px;
-margin-bottom:20px;
-text-shadow:0 0 10px rgba(255,215,0,0.6);
-letter-spacing:2px;
-}
-
-/* ===================== WHEEL ===================== */
+/* WHEEL */
 .wheel-wrapper{
 position:relative;
 width:600px;
 margin:auto;
-margin-top:20px;
 }
 
-/* POINTER */
 .pointer{
 position:absolute;
-top:-25px;
+top:-20px;
 left:50%;
 transform:translateX(-50%);
-width:0;
-height:0;
-border-left:18px solid transparent;
-border-right:18px solid transparent;
-border-top:45px solid #ff2d2d;
+border-left:15px solid transparent;
+border-right:15px solid transparent;
+border-top:40px solid red;
 z-index:10;
-filter:drop-shadow(0 0 10px red);
 }
 
-/* WHEEL CANVAS */
 #wheel{
 border-radius:50%;
-box-shadow:
-0 0 25px rgba(255,215,0,0.6),
-0 0 60px rgba(255,215,0,0.4),
-inset 0 0 30px rgba(0,0,0,0.5);
-transition:transform 8s cubic-bezier(.17,.67,.13,.99);
+box-shadow:0 0 30px gold;
+transition:transform 45s cubic-bezier(0.05,0.9,0.1,1);
 }
 
-/* ===================== SPIN BUTTON ===================== */
+/* BUTTON */
 #spinBtn{
-margin-top:30px;
-padding:20px 60px;
-font-size:24px;
-background:linear-gradient(180deg,#ffd700,#b8860b);
+margin-top:20px;
+padding:15px 50px;
+background:gold;
 border:none;
-border-radius:15px;
+font-size:20px;
 cursor:pointer;
-font-weight:bold;
-letter-spacing:2px;
-box-shadow:0 0 20px rgba(255,215,0,0.5);
-transition:0.3s;
 }
 
-#spinBtn:hover{
-transform:scale(1.08);
-box-shadow:0 0 40px rgba(255,215,0,0.8);
-}
-
-/* ===================== PARTICIPANTS PANEL ===================== */
+/* PARTICIPANTS */
 .participants{
 position:fixed;
 right:20px;
-top:120px;
-width:260px;
-background:rgba(17,17,17,0.95);
-padding:15px;
-border-radius:12px;
+top:100px;
+background:#111;
+padding:10px;
+width:250px;
 border:1px solid gold;
-box-shadow:0 0 20px rgba(255,215,0,0.2);
-backdrop-filter:blur(8px);
 }
 
 .participants input{
 width:100%;
 padding:10px;
-margin-bottom:10px;
-border-radius:8px;
-border:none;
-text-align:center;
 }
 
 .participants button{
 width:100%;
-padding:10px;
-background:linear-gradient(180deg,#ffd700,#b8860b);
+margin-top:5px;
+background:gold;
 border:none;
-font-weight:bold;
-border-radius:8px;
-cursor:pointer;
+padding:10px;
 }
 
 .participants ul{
 list-style:none;
 padding:0;
-margin-top:10px;
 }
 
-.participants li{
-padding:8px;
-border-bottom:1px solid #333;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-
-/* ===================== WINNER MODAL ===================== */
+/* MODAL */
 #winnerModal{
 display:none;
 position:fixed;
 inset:0;
-background:rgba(0,0,0,0.92);
+background:rgba(0,0,0,0.9);
 justify-content:center;
 align-items:center;
-z-index:999;
-backdrop-filter:blur(6px);
 }
 
 .modal-content{
-width:700px;
-background:
-radial-gradient(circle,#111,#000);
+background:#111;
+padding:40px;
 border:2px solid gold;
-padding:50px;
 text-align:center;
-border-radius:20px;
-box-shadow:
-0 0 40px gold,
-0 0 120px rgba(255,215,0,0.6);
-animation:pop 0.4s ease;
 }
 
-/* POP ANIMATION */
-@keyframes pop{
-from{
-transform:scale(0.5);
-opacity:0;
-}
-to{
-transform:scale(1);
-opacity:1;
-}
+.modal-content h1{
+font-size:80px;
+color:gold;
 }
 
-/* MODAL TEXT */
-.modal-content h3{
-color:#d4af37;
-font-size:40px;
-text-shadow:0 0 10px gold;
+/* ADMIN PANEL */
+.admin-panel{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#111;
+border:2px solid gold;
+padding:20px;
+width:300px;
+display:none;
+z-index:9999;
 }
 
-.modal-content h2{
-font-size:50px;
+.admin-panel h2{
+color:gold;
+text-align:center;
+}
+
+.admin-panel input{
+width:100%;
+padding:10px;
 margin:10px 0;
 }
 
-.modal-content h1{
-font-size:90px;
-color:#f2c94c;
-text-shadow:0 0 30px gold;
-}
-
-/* BUTTON */
-.modal-content button{
-padding:15px 50px;
-background:linear-gradient(180deg,#ffd700,#b8860b);
-border:none;
-border-radius:10px;
-font-weight:bold;
-cursor:pointer;
-transition:0.3s;
-}
-
-.modal-content button:hover{
-transform:scale(1.05);
-}
-
-/* ===================== RESPONSIVE ===================== */
-@media(max-width:768px){
-
-h1{
-font-size:40px;
-}
-
-.wheel-wrapper{
-width:90%;
-}
-
-#wheel{
+.admin-panel button{
 width:100%;
-height:auto;
-}
-
-.participants{
-position:relative;
-width:90%;
-margin:20px auto;
-right:auto;
-top:auto;
-}
-
-.modal-content{
-width:90%;
-padding:30px;
-}
-
-.modal-content h1{
-font-size:60px;
-}
-}
-
-/* ===================== OPTIONAL SLOW SPIN MODE ===================== */
-/* kalau mau 45 detik tinggal tambah class ini via JS */
-.slow-spin{
-transition:transform 45s cubic-bezier(0.1, 0.7, 0.1, 1) !important;
+padding:10px;
+margin-top:5px;
+background:gold;
+border:none;
+cursor:pointer;
 }
