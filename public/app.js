@@ -7,19 +7,14 @@ JSON.parse(localStorage.getItem("participants")) || [
 ];
 
 let rotation = 0;
-
-// ================= ADMIN SELECTED WINNER =================
 let forcedWinner = null;
 
-// ================= SAVE PRIZE =================
-function savePrize(){
-const value = document.getElementById("prizeInput").value;
-localStorage.setItem("prize",value);
-document.getElementById("prizeTitle").innerText = value;
-}
+// ================= BIGGER TEXT =================
+ctx.font = "bold 22px Arial";
 
 // ================= DRAW WHEEL =================
 function drawWheel(){
+
 ctx.clearRect(0,0,600,600);
 
 const angle = (2*Math.PI)/participants.length;
@@ -35,9 +30,13 @@ ctx.fill();
 
 ctx.save();
 ctx.translate(300,300);
-ctx.rotate(i*angle+angle/2);
-ctx.fillStyle="#000";
-ctx.fillText(name,150,10);
+ctx.rotate(i*angle + angle/2);
+
+// 🔥 BESARKAN NAMA
+ctx.font = "bold 26px Arial";
+ctx.fillStyle = "#000";
+ctx.fillText(name,120,10);
+
 ctx.restore();
 
 });
@@ -46,28 +45,22 @@ ctx.restore();
 // ================= SPIN CONTROLLED =================
 function spin(){
 
-if(participants.length === 0) return;
-
-// kalau admin belum set
 if(!forcedWinner){
-alert("SET PEMENANG DI ADMIN DULU!");
+alert("SET PEMENANG DULU DI ADMIN!");
 return;
 }
 
-// cari index dari forced winner
-const winnerIndex = participants.indexOf(forcedWinner);
+const index = participants.indexOf(forcedWinner);
 
-// kalau nama tidak ada
-if(winnerIndex === -1){
-alert("PEMENANG TIDAK ADA DI DAFTAR!");
+if(index === -1){
+alert("PEMENANG TIDAK ADA!");
 return;
 }
 
 const angle = 360 / participants.length;
 
-// target posisi (HARUS PAS DI WINNER)
 const target =
-3600 + (360 - (winnerIndex * angle) - angle / 2);
+3600 + (360 - (index * angle) - angle / 2);
 
 rotation += target;
 
@@ -77,27 +70,9 @@ canvas.style.transition =
 canvas.style.transform =
 `rotate(${rotation}deg)`;
 
-// popup muncul SETELAH spin selesai
 setTimeout(()=>{
 showWinner(forcedWinner);
 },45000);
-}
-
-// ================= SET WINNER ADMIN =================
-function forceWinner(){
-const name =
-document.getElementById("forceWinnerInput").value.toUpperCase();
-
-if(!name) return;
-
-forcedWinner = name;
-
-// simpan sementara
-localStorage.setItem("forcedWinner", name);
-
-alert("PEMENANG DI SET: " + name);
-
-closeAdmin();
 }
 
 // ================= WINNER =================
@@ -106,26 +81,15 @@ document.getElementById("winnerName").innerText = name;
 document.getElementById("modalPrize").innerText =
 document.getElementById("prizeTitle").innerText;
 document.getElementById("winnerModal").style.display="flex";
-
-// reset setelah menang
 forcedWinner = null;
-localStorage.removeItem("forcedWinner");
 }
 
-function closeModal(){
-document.getElementById("winnerModal").style.display="none";
-}
-
-// ================= PARTICIPANTS =================
+// ================= PARTICIPANT =================
 function addParticipant(){
-const input = document.getElementById("nameInput");
-
+const input=document.getElementById("nameInput");
 participants.push(input.value.toUpperCase());
-
 localStorage.setItem("participants",JSON.stringify(participants));
-
 input.value="";
-
 drawWheel();
 renderList();
 }
@@ -134,9 +98,7 @@ function renderList(){
 const list=document.getElementById("list");
 list.innerHTML="";
 participants.forEach((p,i)=>{
-list.innerHTML+=`
-<li>${p} <button onclick="remove(${i})">❌</button></li>
-`;
+list.innerHTML+=`<li>${p} <button onclick="remove(${i})">❌</button></li>`;
 });
 }
 
@@ -147,12 +109,37 @@ drawWheel();
 renderList();
 }
 
-// ================= ADMIN PANEL =================
-document.addEventListener("keydown", function(e){
-if(e.ctrlKey && e.shiftKey && e.code === "KeyA"){
-document.getElementById("adminPanel").style.display = "block";
+// ================= ADMIN CTRL + SHIFT =================
+document.addEventListener("keydown",function(e){
+if(e.ctrlKey && e.shiftKey && e.code==="KeyA"){
+document.getElementById("adminPanel").style.display="block";
 }
 });
+
+// ================= ADMIN 5X CLICK TITLE =================
+let clickCount = 0;
+document.getElementById("title").addEventListener("click",function(){
+clickCount++;
+if(clickCount >= 5){
+document.getElementById("adminPanel").style.display="block";
+clickCount=0;
+}
+setTimeout(()=>clickCount=0,2000);
+});
+
+// ================= ADMIN FUNCTIONS =================
+function forceWinner(){
+forcedWinner = document.getElementById("forceWinnerInput").value.toUpperCase();
+alert("PEMENANG SET: " + forcedWinner);
+closeAdmin();
+}
+
+function resetParticipants(){
+participants=[];
+localStorage.removeItem("participants");
+drawWheel();
+renderList();
+}
 
 function closeAdmin(){
 document.getElementById("adminPanel").style.display="none";
@@ -160,6 +147,5 @@ document.getElementById("adminPanel").style.display="none";
 
 // ================= INIT =================
 document.getElementById("spinBtn").addEventListener("click",spin);
-
 drawWheel();
 renderList();
