@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function Home() {
   const [participants, setParticipants] = useState([
@@ -8,13 +8,31 @@ export default function Home() {
     "Budi",
     "Siti",
     "Rina",
+    "Joko",
+    "Dewi",
   ]);
 
   const [input, setInput] = useState("");
   const [subtitle, setSubtitle] = useState("Event Lucky Draw 2026");
 
-  const [winner, setWinner] = useState("");
+  const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
+  const [winner, setWinner] = useState("");
+
+  const sliceAngle = 360 / participants.length;
+
+  const colors = ["#D4AF37", "#111"];
+
+  const wheelStyle = {
+    width: "420px",
+    height: "420px",
+    borderRadius: "50%",
+    position: "relative",
+    transition: "transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)",
+    transform: `rotate(${rotation}deg)`,
+    border: "8px solid #D4AF37",
+    boxShadow: "0 0 40px #D4AF37",
+  };
 
   // TAMBAH PESERTA
   const addParticipant = () => {
@@ -28,98 +46,116 @@ export default function Home() {
     setParticipants(participants.filter((p) => p !== name));
   };
 
-  // SPIN
+  // SPIN LOGIC
   const spin = () => {
     if (participants.length === 0) return;
 
     setSpinning(true);
     setWinner("");
 
+    const randomIndex = Math.floor(Math.random() * participants.length);
+
+    const extraSpins = 5 * 360;
+    const finalAngle = randomIndex * sliceAngle;
+
+    const newRotation = extraSpins + (360 - finalAngle);
+
+    setRotation(newRotation);
+
     setTimeout(() => {
-      const random =
-        participants[Math.floor(Math.random() * participants.length)];
-      setWinner(random);
+      setWinner(participants[randomIndex]);
       setSpinning(false);
-    }, 2500);
+    }, 4200);
   };
 
   return (
     <main
       style={{
         minHeight: "100vh",
-        background: "radial-gradient(circle at center, #111, #000)",
-        color: "#fff",
+        background: "radial-gradient(circle, #111, #000)",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        position: "relative",
+        color: "#fff",
         overflow: "hidden",
+        position: "relative",
       }}
     >
       {/* TITLE */}
-      <h1
-        style={{
-          fontSize: "60px",
-          color: "#D4AF37",
-          textShadow: "0 0 20px #D4AF37",
-          marginBottom: "10px",
-        }}
-      >
+      <h1 style={{ color: "#D4AF37", fontSize: "50px" }}>
         LUXURY SPINNER
       </h1>
 
-      {/* SUBTITLE EDITABLE */}
-      <input
-        value={subtitle}
-        onChange={(e) => setSubtitle(e.target.value)}
+      <p style={{ color: "#aaa" }}>{subtitle}</p>
+
+      {/* POINTER / JARUM */}
+      <div
         style={{
-          background: "transparent",
-          border: "1px solid #D4AF37",
-          color: "#fff",
-          padding: "8px 15px",
-          borderRadius: "8px",
-          marginBottom: "25px",
-          textAlign: "center",
+          width: 0,
+          height: 0,
+          borderLeft: "20px solid transparent",
+          borderRight: "20px solid transparent",
+          borderBottom: "40px solid red",
+          position: "absolute",
+          top: "170px",
+          zIndex: 10,
         }}
       />
 
-      <p style={{ color: "#aaa", marginBottom: "20px" }}>{subtitle}</p>
+      {/* WHEEL */}
+      <div style={wheelStyle}>
+        {participants.map((p, i) => {
+          const angle = i * sliceAngle;
 
-      {/* SPINNER */}
-      <div
-        style={{
-          width: "420px",
-          height: "420px",
-          borderRadius: "50%",
-          border: "14px solid #D4AF37",
-          background:
-            "conic-gradient(#D4AF37, #111, #D4AF37, #111, #D4AF37, #111)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "60px",
-          boxShadow: "0 0 60px #D4AF37",
-          animation: spinning ? "spin 0.3s linear infinite" : "none",
-        }}
-      >
-        🎡
+          return (
+            <div
+              key={i}
+              style={{
+                position: "absolute",
+                width: "50%",
+                height: "50%",
+                top: "50%",
+                left: "50%",
+                transformOrigin: "0% 0%",
+                transform: `rotate(${angle}deg) skewY(-${90 - sliceAngle}deg)`,
+                background: colors[i % 2],
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span
+                style={{
+                  transform: `skewY(${90 - sliceAngle}deg) rotate(${sliceAngle / 2}deg)`,
+                  color: "#fff",
+                  fontSize: "14px",
+                  position: "absolute",
+                  left: "60px",
+                }}
+              >
+                {p}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* BUTTON */}
       <button
         onClick={spin}
+        disabled={spinning}
         style={{
           marginTop: "25px",
           padding: "15px 40px",
           background: "#D4AF37",
           border: "none",
           borderRadius: "10px",
-          fontWeight: "bold",
           cursor: "pointer",
+          fontWeight: "bold",
         }}
       >
-        SPIN NOW
+        {spinning ? "SPINNING..." : "SPIN NOW"}
       </button>
 
       {/* WINNER */}
@@ -131,16 +167,15 @@ export default function Home() {
             border: "2px solid #D4AF37",
             padding: "30px",
             borderRadius: "20px",
-            fontSize: "28px",
+            fontSize: "30px",
             color: "#D4AF37",
-            textAlign: "center",
           }}
         >
           🏆 WINNER: {winner}
         </div>
       )}
 
-      {/* PARTICIPANT PANEL */}
+      {/* PARTICIPANT CONTROL */}
       <div
         style={{
           position: "absolute",
@@ -149,46 +184,37 @@ export default function Home() {
           width: "220px",
           background: "rgba(255,255,255,0.05)",
           border: "1px solid #D4AF37",
-          borderRadius: "10px",
           padding: "10px",
         }}
       >
-        <h3 style={{ color: "#D4AF37" }}>Participants</h3>
-
-        {/* INPUT */}
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Tambah nama"
-          style={{
-            width: "100%",
-            padding: "6px",
-            marginBottom: "5px",
-          }}
+          placeholder="Tambah peserta"
+          style={{ width: "100%", marginBottom: "5px" }}
         />
 
         <button
           onClick={addParticipant}
           style={{
             width: "100%",
-            marginBottom: "10px",
             background: "#D4AF37",
             border: "none",
-            padding: "6px",
-            cursor: "pointer",
+            padding: "5px",
+            marginBottom: "10px",
           }}
         >
           ADD
         </button>
 
-        {/* LIST */}
         {participants.map((p, i) => (
           <div
             key={i}
             style={{
               display: "flex",
               justifyContent: "space-between",
-              marginBottom: "5px",
+              fontSize: "12px",
+              marginBottom: "4px",
             }}
           >
             <span>{p}</span>
@@ -197,7 +223,7 @@ export default function Home() {
               style={{
                 background: "red",
                 border: "none",
-                color: "white",
+                color: "#fff",
                 cursor: "pointer",
               }}
             >
@@ -206,14 +232,6 @@ export default function Home() {
           </div>
         ))}
       </div>
-
-      {/* ANIMATION */}
-      <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-      `}</style>
     </main>
   );
 }
