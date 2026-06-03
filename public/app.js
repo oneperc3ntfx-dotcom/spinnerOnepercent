@@ -5,7 +5,7 @@ let participants = [];
 let forcedWinner = null;
 let rotation = 0;
 
-// ================= LOAD DATA SERVER =================
+// ================= LOAD =================
 async function loadData(){
 const res = await fetch("/participants");
 participants = await res.json();
@@ -13,9 +13,8 @@ drawWheel();
 renderList();
 }
 
-// ================= DRAW WHEEL (BIG TEXT FIX) =================
+// ================= DRAW =================
 function drawWheel(){
-
 ctx.clearRect(0,0,600,600);
 
 const angle = (2*Math.PI)/participants.length;
@@ -33,7 +32,7 @@ ctx.save();
 ctx.translate(300,300);
 ctx.rotate(i*angle + angle/2);
 
-// 🔥 BESARIN NAMA
+// TEXT LEBIH BESAR
 ctx.font = "bold 28px Arial";
 ctx.fillStyle = "#000";
 ctx.fillText(name,120,10);
@@ -43,9 +42,8 @@ ctx.restore();
 });
 }
 
-// ================= ADD PARTICIPANT (SYNC SERVER) =================
+// ================= ADD =================
 async function addParticipant(){
-
 const name = document.getElementById("nameInput").value;
 
 await fetch("/participants",{
@@ -58,9 +56,32 @@ document.getElementById("nameInput").value="";
 loadData();
 }
 
-// ================= SET WINNER (ADMIN PC) =================
-async function setWinner(){
+// ================= DELETE =================
+async function remove(name){
 
+await fetch("/participants",{
+method:"DELETE",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({name})
+});
+
+loadData();
+}
+
+// ================= RENDER =================
+function renderList(){
+const list=document.getElementById("list");
+list.innerHTML="";
+
+participants.forEach(p=>{
+list.innerHTML+=`
+<li>${p} <button onclick="remove('${p}')">❌</button></li>
+`;
+});
+}
+
+// ================= SET WINNER =================
+async function setWinner(){
 const name = document.getElementById("forceWinnerInput").value;
 
 await fetch("/winner",{
@@ -80,22 +101,17 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN (SYNC WINNER) =================
+// ================= SPIN 45 DETIK =================
 async function spin(){
 
 const winner = await getWinner();
 
 if(!winner){
-alert("SET WINNER DULU DI ADMIN");
+alert("SET WINNER DULU");
 return;
 }
 
 const index = participants.indexOf(winner);
-
-if(index === -1){
-alert("WINNER TIDAK ADA DI LIST");
-return;
-}
 
 const angle = 360 / participants.length;
 
@@ -138,18 +154,6 @@ document.getElementById("adminPanel").style.display="block";
 }
 });
 
-// ================= CLICK 5X TITLE =================
-let click=0;
-document.getElementById("title").addEventListener("click",()=>{
-click++;
-if(click>=5){
-document.getElementById("adminPanel").style.display="block";
-click=0;
-}
-setTimeout(()=>click=0,2000);
-});
-
 // ================= INIT =================
 document.getElementById("spinBtn").addEventListener("click",spin);
-
 loadData();
