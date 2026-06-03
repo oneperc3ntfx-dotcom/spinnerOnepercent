@@ -3,7 +3,7 @@ const ctx = canvas.getContext("2d");
 
 let participants = [];
 
-// ================= LOAD DATA =================
+// ================= LOAD PARTICIPANTS =================
 async function loadData(){
 const res = await fetch("/participants");
 participants = await res.json();
@@ -15,6 +15,8 @@ renderList();
 function drawWheel(){
 
 ctx.clearRect(0,0,600,600);
+
+if(participants.length === 0) return;
 
 const angle = (2*Math.PI)/participants.length;
 
@@ -47,17 +49,20 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN FINAL FIX (100% ACCURATE) =================
+// ================= SPIN FIX FINAL =================
 async function spin(){
 
 const winner = await getWinner();
 
-if(!winner){
-alert("SET WINNER DULU");
-return;
+// 🎲 RANDOM MODE jika kosong
+let finalWinner = winner;
+
+if(!finalWinner){
+const randomIndex = Math.floor(Math.random() * participants.length);
+finalWinner = participants[randomIndex];
 }
 
-const index = participants.indexOf(winner);
+const index = participants.indexOf(finalWinner);
 
 if(index === -1){
 alert("WINNER TIDAK ADA DI LIST");
@@ -66,33 +71,33 @@ return;
 
 const total = participants.length;
 
-// 🎯 tiap segment
+// 🎯 size per segment
 const slice = 360 / total;
 
-// 🎯 center dari winner
+// 🎯 center winner
 const winnerAngle = index * slice + slice / 2;
 
-// 🚨 FIX PENTING: CANVAS START DI JAM 3, POINTER DI JAM 12
-const offsetFix = 90;
+// 🚨 FIX POINTER (jam 12)
+const offset = 90;
 
-// 🎯 FINAL ROTATION (AKURAT 100%)
-const finalRotation = (360 * 10) + (360 - winnerAngle - offsetFix);
+// 🎯 FINAL ROTATION AKURAT
+const finalRotation = (360 * 10) + (360 - winnerAngle - offset);
 
-// ❗ RESET STATE BIAR TIDAK DRIFT
+// ❗ RESET ANIMASI
 canvas.style.transition = "none";
 canvas.style.transform = "rotate(0deg)";
 canvas.getBoundingClientRect();
 
-// 🎬 START SPIN 45 DETIK
+// 🎬 SPIN 45 DETIK
 canvas.style.transition =
 "transform 45s cubic-bezier(0.05,0.9,0.1,1)";
 
 canvas.style.transform =
 `rotate(${finalRotation}deg)`;
 
-// 🏆 SHOW WINNER AFTER STOP
+// 🏆 SHOW WINNER
 setTimeout(()=>{
-showWinner(winner);
+showWinner(finalWinner);
 },45000);
 }
 
@@ -102,7 +107,7 @@ document.getElementById("winnerName").innerText = name;
 document.getElementById("winnerModal").style.display="flex";
 }
 
-// ================= ADD =================
+// ================= ADD PARTICIPANT =================
 async function addParticipant(){
 const name = document.getElementById("nameInput").value;
 
@@ -116,7 +121,7 @@ document.getElementById("nameInput").value="";
 loadData();
 }
 
-// ================= DELETE =================
+// ================= DELETE PARTICIPANT =================
 async function remove(name){
 
 await fetch("/participants",{
@@ -140,9 +145,11 @@ list.innerHTML+=`
 });
 }
 
-// ================= SET WINNER =================
+// ================= SET WINNER (STICKY UI) =================
 async function setWinner(){
-const name = document.getElementById("forceWinnerInput").value;
+
+const input = document.getElementById("forceWinnerInput");
+const name = input.value.trim();
 
 await fetch("/winner",{
 method:"POST",
@@ -150,8 +157,29 @@ headers:{"Content-Type":"application/json"},
 body:JSON.stringify({name})
 });
 
-alert("WINNER SET: " + name);
-closeAdmin();
+// 🔥 TIDAK DIHAPUS (biar nempel)
+if(name === ""){
+alert("MODE RANDOM AKTIF");
+}else{
+alert("WINNER LOCK: " + name.toUpperCase());
+}
+
+// sync UI
+loadWinnerUI();
+}
+
+// ================= LOAD WINNER UI =================
+async function loadWinnerUI(){
+const res = await fetch("/winner");
+const data = await res.json();
+
+const input = document.getElementById("forceWinnerInput");
+
+if(data.forcedWinner && data.forcedWinner !== ""){
+input.value = data.forcedWinner;
+}else{
+input.value = ""; // random mode
+}
 }
 
 // ================= RESET =================
@@ -173,4 +201,6 @@ document.getElementById("adminPanel").style.display="block";
 
 // ================= INIT =================
 document.getElementById("spinBtn").addEventListener("click",spin);
+
 loadData();
+loadWinnerUI();
