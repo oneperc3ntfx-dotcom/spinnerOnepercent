@@ -1,17 +1,17 @@
 export const metadata = {
   title: "Luxury Spinner",
-  description: "Luxury Spinner Website"
+  description: "Luxury Spinner",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body
         style={{
           margin: 0,
-          padding: 0,
-          background: "#080808",
-          color: "#ffffff"
+          background: "#050505",
+          color: "#fff",
+          fontFamily: "Arial",
         }}
       >
         {children}
