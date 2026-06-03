@@ -1,0 +1,152 @@
+body{
+margin:0;
+background:#050505;
+font-family:Arial,sans-serif;
+color:white;
+overflow-x:hidden;
+}
+
+.container{
+text-align:center;
+padding:20px;
+}
+
+h1{
+color:#f2c94c;
+font-size:70px;
+text-shadow:0 0 20px gold;
+}
+
+.prize-box{
+margin:20px;
+}
+
+.prize-box input{
+padding:12px;
+width:300px;
+}
+
+.prize-box button{
+padding:12px 20px;
+background:#d4af37;
+border:none;
+cursor:pointer;
+}
+
+#prizeTitle{
+color:#fff;
+font-size:42px;
+margin-bottom:20px;
+}
+
+.wheel-wrapper{
+position:relative;
+width:600px;
+margin:auto;
+}
+
+.pointer{
+position:absolute;
+top:-20px;
+left:50%;
+transform:translateX(-50%);
+width:0;
+height:0;
+border-left:20px solid transparent;
+border-right:20px solid transparent;
+border-top:40px solid red;
+z-index:10;
+}
+
+#wheel{
+border-radius:50%;
+box-shadow:
+0 0 30px gold,
+0 0 80px rgba(255,215,0,.8);
+transition:transform 8s cubic-bezier(.17,.67,.13,.99);
+}
+
+#spinBtn{
+margin-top:30px;
+padding:20px 60px;
+font-size:24px;
+background:#d4af37;
+border:none;
+border-radius:15px;
+cursor:pointer;
+}
+
+.participants{
+position:fixed;
+right:20px;
+top:120px;
+width:260px;
+background:#111;
+padding:15px;
+border-radius:10px;
+border:1px solid gold;
+}
+
+.participants input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
+}
+
+.participants button{
+width:100%;
+padding:10px;
+background:#d4af37;
+border:none;
+}
+
+.participants ul{
+list-style:none;
+padding:0;
+}
+
+.participants li{
+padding:8px;
+border-bottom:1px solid #333;
+}
+
+#winnerModal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.9);
+justify-content:center;
+align-items:center;
+}
+
+.modal-content{
+width:700px;
+background:#090909;
+border:2px solid gold;
+padding:50px;
+text-align:center;
+border-radius:20px;
+box-shadow:
+0 0 50px gold,
+0 0 150px rgba(255,215,0,.8);
+}
+
+.modal-content h3{
+color:#d4af37;
+font-size:40px;
+}
+
+.modal-content h2{
+font-size:50px;
+}
+
+.modal-content h1{
+font-size:100px;
+color:#f2c94c;
+}
+
+.modal-content button{
+padding:15px 50px;
+background:#d4af37;
+border:none;
+}
