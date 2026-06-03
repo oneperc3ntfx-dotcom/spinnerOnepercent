@@ -2,7 +2,6 @@ const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
 let participants = [];
-let forcedWinner = null;
 let rotation = 0;
 
 // ================= LOAD DATA =================
@@ -32,6 +31,7 @@ ctx.save();
 ctx.translate(300,300);
 ctx.rotate(i*angle + angle/2);
 
+// TEXT
 ctx.font = "bold 28px Arial";
 ctx.fillStyle = "#000";
 ctx.fillText(name,120,10);
@@ -48,13 +48,13 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN FIX 100% LOCK TO WINNER =================
+// ================= SPIN FIX FINAL =================
 async function spin(){
 
 const winner = await getWinner();
 
 if(!winner){
-alert("SET WINNER DULU DI ADMIN");
+alert("SET WINNER DULU");
 return;
 }
 
@@ -65,35 +65,39 @@ alert("WINNER TIDAK ADA DI LIST");
 return;
 }
 
-const angle = 360 / participants.length;
+const total = participants.length;
 
-// 🎯 POSISI TENGAH SEGMENT WINNER
-const targetAngle = index * angle + angle / 2;
+// 🎯 tiap segment
+const segment = 360 / total;
 
-// 🔥 TOTAL PUTARAN (BIAR DRAMA)
-const totalSpins = 10 * 360;
+// 🎯 center dari winner
+const winnerCenter = index * segment + segment / 2;
 
-// 🔥 HITUNG FINAL POSITION (FIX ABSOLUTE)
-const finalRotation = totalSpins + (360 - targetAngle);
+// 🔥 pointer di atas (0°)
+const pointer = 0;
 
-// ❗ PENTING: JANGAN += (INI PENYEBAB BUG KAMU SEBELUMNYA)
-rotation = finalRotation;
+// 🔥 koreksi arah wheel
+const normalized = 360 - winnerCenter + pointer;
 
-// RESET BIAR ANIMASI CLEAN
+// 🔥 tambahan spin
+const extra = 360 * 8;
+
+// 🎯 FINAL ROTATION (FIX UTAMA)
+const finalRotation = extra + normalized;
+
+// ❗ RESET ANIMASI BIAR CLEAN
 canvas.style.transition = "none";
 canvas.style.transform = "rotate(0deg)";
-
-// FORCE REFLOW (BIAR BROWSER RESET STATE)
 canvas.offsetHeight;
 
-// START ANIMATION 45 DETIK
+// 🎬 START SPIN 45 DETIK
 canvas.style.transition =
 "transform 45s cubic-bezier(0.05,0.9,0.1,1)";
 
 canvas.style.transform =
-`rotate(${rotation}deg)`;
+`rotate(${finalRotation}deg)`;
 
-// SHOW WINNER AFTER FINISH
+// 🏆 SHOW WINNER AFTER FINISH
 setTimeout(()=>{
 showWinner(winner);
 },45000);
@@ -175,5 +179,4 @@ document.getElementById("adminPanel").style.display="block";
 
 // ================= INIT =================
 document.getElementById("spinBtn").addEventListener("click",spin);
-
 loadData();
