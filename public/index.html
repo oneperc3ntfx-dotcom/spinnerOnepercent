@@ -1,89 +1,64 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Luxury Spinner</title>
 
 <link rel="stylesheet" href="style.css">
-
 </head>
+
 <body>
 
 <div class="container">
 
-    <h1>LUXURY SPINNER</h1>
+  <h1 id="title">LUXURY SPINNER</h1>
 
-    <div class="prize-box">
+  <div class="prize-box">
+    <input id="prizeInput" placeholder="Nama Hadiah">
+    <button onclick="savePrize()">SIMPAN</button>
+  </div>
 
-        <input
-            id="prizeInput"
-            placeholder="Masukkan Nama Hadiah">
+  <h2 id="prizeTitle">HADIAH 1 JUTA</h2>
 
-        <button onclick="savePrize()">
-            SIMPAN
-        </button>
+  <div class="wheel-wrapper">
+    <div class="pointer"></div>
+    <canvas id="wheel" width="600" height="600"></canvas>
+  </div>
 
-    </div>
-
-    <h2 id="prizeTitle">
-        HADIAH 1 JUTA
-    </h2>
-
-    <div class="wheel-wrapper">
-
-        <div class="pointer"></div>
-
-        <canvas
-            id="wheel"
-            width="600"
-            height="600">
-        </canvas>
-
-    </div>
-
-    <button
-        id="spinBtn">
-        SPIN NOW
-    </button>
+  <button id="spinBtn">SPIN NOW</button>
 
 </div>
 
+<!-- PARTICIPANTS -->
 <div class="participants">
-
-    <input
-        id="nameInput"
-        placeholder="Tambah peserta">
-
-    <button onclick="addParticipant()">
-        ADD
-    </button>
-
-    <ul id="list"></ul>
-
+  <input id="nameInput" placeholder="Tambah peserta">
+  <button onclick="addParticipant()">ADD</button>
+  <ul id="list"></ul>
 </div>
 
+<!-- WINNER -->
 <div id="winnerModal">
+  <div class="modal-content">
+    <h3>🏆 PEMENANG</h3>
+    <h2 id="modalPrize"></h2>
+    <h1 id="winnerName"></h1>
+    <button onclick="closeModal()">TUTUP</button>
+  </div>
+</div>
 
-    <div class="modal-content">
+<!-- ADMIN PANEL (HIDDEN) -->
+<div id="adminPanel" class="admin-panel">
 
-        🏆
+  <h2>ADMIN PANEL</h2>
 
-        <h3>
-            SELAMAT KAMU MEMENANGKAN
-        </h3>
+  <input id="forceWinnerInput" placeholder="Set Pemenang">
+  <button onclick="forceWinner()">SET PEMENANG</button>
 
-        <h2 id="modalPrize"></h2>
+  <button onclick="resetParticipants()">RESET PESERTA</button>
 
-        <h1 id="winnerName"></h1>
-
-        <button onclick="closeModal()">
-            TUTUP
-        </button>
-
-    </div>
+  <button onclick="closeAdmin()">CLOSE</button>
 
 </div>
 
