@@ -3,519 +3,394 @@
 import { useState } from "react";
 
 export default function Home() {
-  const [participants, setParticipants] = useState([
-    "ANDI",
-    "BUDI",
-    "SITI",
-    "RINA",
-    "JOKO",
-    "DEWI",
-  ]);
+const [participants, setParticipants] = useState([
+"Andi",
+"Budi",
+"Siti",
+"Rina",
+"Joko",
+"Dewi",
+]);
 
-  const [input, setInput] = useState("");
+const [input, setInput] = useState("");
+const [title, setTitle] = useState("LUXURY SPINNER");
+const [subtitle, setSubtitle] = useState("HADIAH 1 JUTA");
 
-  const [title, setTitle] = useState("LUXURY SPINNER");
-  const [subtitle, setSubtitle] = useState("HADIAH 1 JUTA");
+const [rotation, setRotation] = useState(0);
+const [spinning, setSpinning] = useState(false);
+const [winner, setWinner] = useState("");
 
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
+const addParticipant = () => {
+if (!input.trim()) return;
 
-  const [winner, setWinner] = useState("");
-  const [showWinner, setShowWinner] = useState(false);
+```
+setParticipants([...participants, input.trim()]);
+setInput("");
+```
 
-  const sliceAngle = 360 / participants.length;
+};
 
-  const addParticipant = () => {
-    if (!input.trim()) return;
+const removeParticipant = (name) => {
+setParticipants(participants.filter((p) => p !== name));
+};
 
-    setParticipants([
-      ...participants,
-      input.toUpperCase(),
-    ]);
+const spin = () => {
+if (participants.length === 0 || spinning) return;
 
-    setInput("");
-  };
+```
+setSpinning(true);
 
-  const removeParticipant = (name) => {
-    setParticipants(
-      participants.filter((p) => p !== name)
-    );
-  };
+const randomIndex = Math.floor(
+  Math.random() * participants.length
+);
 
-  const polarToCartesian = (
-    centerX,
-    centerY,
-    radius,
-    angleInDegrees
-  ) => {
-    const angleInRadians =
-      ((angleInDegrees - 90) * Math.PI) /
-      180;
+const sliceAngle = 360 / participants.length;
 
-    return {
-      x:
-        centerX +
-        radius * Math.cos(angleInRadians),
-      y:
-        centerY +
-        radius * Math.sin(angleInRadians),
-    };
-  };
+const stopAngle =
+  360 - (randomIndex * sliceAngle + sliceAngle / 2);
 
-  const describeArc = (
-    x,
-    y,
-    radius,
-    startAngle,
-    endAngle
-  ) => {
-    const start = polarToCartesian(
-      x,
-      y,
-      radius,
-      endAngle
-    );
+const totalRotation =
+  360 * 8 + stopAngle;
 
-    const end = polarToCartesian(
-      x,
-      y,
-      radius,
-      startAngle
-    );
+setRotation((prev) => prev + totalRotation);
 
-    const largeArcFlag =
-      endAngle - startAngle <= 180
-        ? "0"
-        : "1";
+setTimeout(() => {
+  setWinner(participants[randomIndex]);
+  setSpinning(false);
+}, 6000);
+```
 
-    return [
-      "M",
-      x,
-      y,
-      "L",
-      start.x,
-      start.y,
-      "A",
-      radius,
-      radius,
-      0,
-      largeArcFlag,
-      0,
-      end.x,
-      end.y,
-      "Z",
-    ].join(" ");
-  };
+};
 
-  const spin = () => {
-    if (spinning) return;
+const wheelStyle = {
+width: 650,
+height: 650,
+borderRadius: "50%",
+position: "relative",
+transition:
+"transform 6s cubic-bezier(.15,.8,.15,1)",
+transform: `rotate(${rotation}deg)`,
+overflow: "hidden",
+border: "12px solid #D4AF37",
+boxShadow: "0 0 60px #D4AF37",
+background:
+"radial-gradient(circle,#f7d46a,#d4af37)",
+};
 
-    const winnerIndex = Math.floor(
-      Math.random() * participants.length
-    );
+const sliceAngle = 360 / participants.length;
 
-    const winnerName =
-      participants[winnerIndex];
+return (
+<main
+style={{
+minHeight: "100vh",
+background:
+"radial-gradient(circle,#111,#000)",
+display: "flex",
+flexDirection: "column",
+alignItems: "center",
+justifyContent: "center",
+color: "#fff",
+overflow: "hidden",
+}}
+>
+<input
+value={title}
+onChange={(e) =>
+setTitle(e.target.value)
+}
+style={{
+background: "transparent",
+border: "none",
+color: "#D4AF37",
+fontSize: 56,
+fontWeight: "bold",
+textAlign: "center",
+marginBottom: 10,
+textShadow:
+"0 0 20px rgba(212,175,55,.8)",
+}}
+/>
 
-    const extraSpins = 360 * 8;
+```
+  <input
+    value={subtitle}
+    onChange={(e) =>
+      setSubtitle(e.target.value)
+    }
+    style={{
+      width: 600,
+      maxWidth: "90%",
+      textAlign: "center",
+      fontSize: 30,
+      fontWeight: "bold",
+      padding: 14,
+      borderRadius: 15,
+      border: "2px solid #D4AF37",
+      background: "#111",
+      color: "#fff",
+      marginBottom: 40,
+    }}
+  />
 
-    const targetAngle =
-      360 -
-      (winnerIndex * sliceAngle +
-        sliceAngle / 2);
+  <div
+    style={{
+      position: "relative",
+      width: 650,
+      height: 650,
+    }}
+  >
+    <div
+      style={{
+        position: "absolute",
+        top: -55,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: 0,
+        height: 0,
+        borderLeft:
+          "28px solid transparent",
+        borderRight:
+          "28px solid transparent",
+        borderTop:
+          "70px solid #D4AF37",
+        zIndex: 999,
+      }}
+    />
 
-    setSpinning(true);
+    <div style={wheelStyle}>
+      {participants.map((name, i) => {
+        const start = i * sliceAngle;
 
-    setRotation(
-      (prev) =>
-        prev +
-        extraSpins +
-        targetAngle
-    );
+        return (
+          <div
+            key={i}
+            style={{
+              position: "absolute",
+              width: "50%",
+              height: "50%",
+              left: "50%",
+              top: "50%",
+              transformOrigin:
+                "0% 0%",
+              transform:
+                `rotate(${start}deg) skewY(${90 - sliceAngle}deg)`,
+              background:
+                i % 2 === 0
+                  ? "#f7d46a"
+                  : "#d4af37",
+              border:
+                "1px solid rgba(0,0,0,.2)",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                left: 120,
+                top: "50%",
+                transform:
+                  `translateY(-50%) skewY(-${90 - sliceAngle}deg)`,
+                width: 180,
+                color: "#000",
+                fontWeight: "bold",
+                fontSize: 18,
+                whiteSpace:
+                  "nowrap",
+                overflow:
+                  "hidden",
+                textOverflow:
+                  "ellipsis",
+              }}
+            >
+              {name}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
 
-    setTimeout(() => {
-      setWinner(winnerName);
-      setShowWinner(true);
-      setSpinning(false);
-    }, 6000);
-  };
+  <button
+    onClick={spin}
+    disabled={spinning}
+    style={{
+      marginTop: 35,
+      padding:
+        "18px 60px",
+      background: "#D4AF37",
+      border: "none",
+      borderRadius: 15,
+      fontSize: 24,
+      fontWeight: "bold",
+      cursor: "pointer",
+    }}
+  >
+    {spinning
+      ? "SPINNING..."
+      : "SPIN NOW"}
+  </button>
 
-  return (
-    <>
-      <main
+  <div
+    style={{
+      position: "fixed",
+      right: 20,
+      bottom: 20,
+      width: 260,
+      background:
+        "rgba(0,0,0,.8)",
+      border:
+        "1px solid #D4AF37",
+      borderRadius: 15,
+      padding: 15,
+    }}
+  >
+    <input
+      value={input}
+      onChange={(e) =>
+        setInput(e.target.value)
+      }
+      placeholder="Tambah peserta"
+      style={{
+        width: "100%",
+        padding: 10,
+        marginBottom: 10,
+      }}
+    />
+
+    <button
+      onClick={addParticipant}
+      style={{
+        width: "100%",
+        padding: 10,
+        background:
+          "#D4AF37",
+        border: "none",
+        fontWeight: "bold",
+        marginBottom: 15,
+      }}
+    >
+      ADD
+    </button>
+
+    {participants.map((p, i) => (
+      <div
+        key={i}
         style={{
-          minHeight: "100vh",
-          background:
-            "radial-gradient(circle,#111,#000)",
           display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: "40px",
-          overflow: "hidden",
+          justifyContent:
+            "space-between",
+          marginBottom: 6,
         }}
       >
-        {/* PANEL PESERTA */}
-        <div
-          style={{
-            width: "280px",
-            background:
-              "rgba(255,255,255,.05)",
-            border:
-              "1px solid #D4AF37",
-            borderRadius: "20px",
-            padding: "20px",
-          }}
-        >
-          <h2
-            style={{
-              color: "#D4AF37",
-              textAlign: "center",
-            }}
-          >
-            PESERTA
-          </h2>
+        <span>{p}</span>
 
-          <input
-            value={input}
-            onChange={(e) =>
-              setInput(e.target.value)
-            }
-            placeholder="Nama peserta"
-            style={{
-              width: "100%",
-              padding: "10px",
-              marginBottom: "10px",
-            }}
-          />
-
-          <button
-            onClick={addParticipant}
-            style={{
-              width: "100%",
-              padding: "10px",
-              background: "#D4AF37",
-              border: "none",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-          >
-            TAMBAH
-          </button>
-
-          <div
-            style={{
-              marginTop: "15px",
-              maxHeight: "400px",
-              overflowY: "auto",
-            }}
-          >
-            {participants.map((p) => (
-              <div
-                key={p}
-                style={{
-                  display: "flex",
-                  justifyContent:
-                    "space-between",
-                  marginBottom: "8px",
-                }}
-              >
-                <span>{p}</span>
-
-                <button
-                  onClick={() =>
-                    removeParticipant(p)
-                  }
-                  style={{
-                    background: "red",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
-                >
-                  X
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* SPINNER */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <input
-            value={title}
-            onChange={(e) =>
-              setTitle(e.target.value)
-            }
-            style={{
-              fontSize: "52px",
-              fontWeight: "bold",
-              color: "#D4AF37",
-              background:
-                "transparent",
-              border: "none",
-              textAlign: "center",
-              textShadow:
-                "0 0 20px gold",
-            }}
-          />
-
-          <input
-            value={subtitle}
-            onChange={(e) =>
-              setSubtitle(e.target.value)
-            }
-            style={{
-              marginBottom: "30px",
-              textAlign: "center",
-              border:
-                "1px solid #D4AF37",
-              borderRadius: "8px",
-              background: "#111",
-              color: "#fff",
-              padding: "8px 15px",
-            }}
-          />
-
-          {/* JARUM */}
-          <div
-            style={{
-              width: 0,
-              height: 0,
-              borderLeft:
-                "25px solid transparent",
-              borderRight:
-                "25px solid transparent",
-              borderTop:
-                "60px solid #D4AF37",
-              zIndex: 999,
-              marginBottom: "-15px",
-            }}
-          />
-
-          <div
-            style={{
-              width: "650px",
-              height: "650px",
-              position: "relative",
-            }}
-          >
-            <svg
-              viewBox="0 0 600 600"
-              style={{
-                width: "100%",
-                height: "100%",
-                transform: `rotate(${rotation}deg)`,
-                transition:
-                  "transform 6s cubic-bezier(.15,.85,.12,1)",
-                filter:
-                  "drop-shadow(0 0 50px gold)",
-              }}
-            >
-              {participants.map(
-                (name, index) => {
-                  const start =
-                    index *
-                    sliceAngle;
-
-                  const end =
-                    start +
-                    sliceAngle;
-
-                  const mid =
-                    start +
-                    sliceAngle / 2;
-
-                  const textRadius = 190;
-
-                  const tx =
-                    300 +
-                    textRadius *
-                      Math.cos(
-                        ((mid - 90) *
-                          Math.PI) /
-                          180
-                      );
-
-                  const ty =
-                    300 +
-                    textRadius *
-                      Math.sin(
-                        ((mid - 90) *
-                          Math.PI) /
-                          180
-                      );
-
-                  return (
-                    <g key={index}>
-                      <path
-                        d={describeArc(
-                          300,
-                          300,
-                          290,
-                          start,
-                          end
-                        )}
-                        fill={
-                          index % 2 ===
-                          0
-                            ? "#D4AF37"
-                            : "#F5D76E"
-                        }
-                        stroke="#000"
-                        strokeWidth="2"
-                      />
-
-                      <text
-                        x={tx}
-                        y={ty}
-                        fill="#000"
-                        fontWeight="bold"
-                        fontSize="24"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        transform={`rotate(${mid} ${tx} ${ty})`}
-                      >
-                        {name}
-                      </text>
-                    </g>
-                  );
-                }
-              )}
-
-              <circle
-                cx="300"
-                cy="300"
-                r="35"
-                fill="red"
-              />
-            </svg>
-          </div>
-
-          <button
-            onClick={spin}
-            disabled={spinning}
-            style={{
-              marginTop: "20px",
-              padding:
-                "18px 50px",
-              fontSize: "22px",
-              fontWeight: "bold",
-              background:
-                "linear-gradient(#FFD700,#D4AF37)",
-              border: "none",
-              borderRadius: "15px",
-              cursor: "pointer",
-            }}
-          >
-            {spinning
-              ? "SPINNING..."
-              : "SPIN NOW"}
-          </button>
-        </div>
-      </main>
-
-      {/* POPUP PEMENANG */}
-      {showWinner && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background:
-              "rgba(0,0,0,.85)",
-            backdropFilter:
-              "blur(10px)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
-        >
-          <div
-            style={{
-              background: "#000",
-              border:
-                "3px solid #D4AF37",
-              borderRadius: "30px",
-              padding: "50px",
-              textAlign: "center",
-              boxShadow:
-                "0 0 80px gold",
-              animation:
-                "winnerZoom .5s ease",
-            }}
-          >
-            <div
-              style={{
-                fontSize: "80px",
-              }}
-            >
-              🏆
-            </div>
-
-            <div
-              style={{
-                color: "#D4AF37",
-                fontSize: "30px",
-                marginTop: "10px",
-              }}
-            >
-              PEMENANG
-            </div>
-
-            <div
-              style={{
-                fontSize: "65px",
-                fontWeight: "bold",
-                color: "#fff",
-                marginTop: "10px",
-                textShadow:
-                  "0 0 30px gold",
-              }}
-            >
-              {winner}
-            </div>
-
-            <button
-              onClick={() =>
-                setShowWinner(false)
-              }
-              style={{
-                marginTop: "25px",
-                padding:
-                  "15px 40px",
-                background:
-                  "#D4AF37",
-                border: "none",
-                borderRadius: "12px",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-            >
-              TUTUP
-            </button>
-          </div>
-        </div>
-      )}
-
-      <style jsx global>{`
-        @keyframes winnerZoom {
-          from {
-            transform: scale(0.3);
-            opacity: 0;
+        <button
+          onClick={() =>
+            removeParticipant(p)
           }
+          style={{
+            background:
+              "red",
+            color: "#fff",
+            border: "none",
+          }}
+        >
+          X
+        </button>
+      </div>
+    ))}
+  </div>
 
-          to {
-            transform: scale(1);
-            opacity: 1;
+  {winner && (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background:
+          "rgba(0,0,0,.92)",
+        display: "flex",
+        justifyContent:
+          "center",
+        alignItems: "center",
+        zIndex: 9999,
+      }}
+    >
+      <div
+        style={{
+          textAlign: "center",
+          border:
+            "3px solid #D4AF37",
+          padding: 60,
+          borderRadius: 30,
+          background: "#111",
+          boxShadow:
+            "0 0 120px #D4AF37",
+        }}
+      >
+        <div
+          style={{
+            fontSize: 90,
+          }}
+        >
+          🏆
+        </div>
+
+        <div
+          style={{
+            color: "#D4AF37",
+            fontSize: 42,
+            fontWeight: "bold",
+            marginBottom: 10,
+          }}
+        >
+          SELAMAT KAMU MEMENANGKAN
+        </div>
+
+        <div
+          style={{
+            fontSize: 48,
+            fontWeight: "bold",
+            color: "#fff",
+            marginBottom: 30,
+          }}
+        >
+          {subtitle}
+        </div>
+
+        <div
+          style={{
+            fontSize: 80,
+            fontWeight: "bold",
+            color: "#D4AF37",
+            textShadow:
+              "0 0 40px #D4AF37",
+          }}
+        >
+          {winner}
+        </div>
+
+        <button
+          onClick={() =>
+            setWinner("")
           }
-        }
-      `}</style>
-    </>
-  );
+          style={{
+            marginTop: 40,
+            padding:
+              "15px 40px",
+            background:
+              "#D4AF37",
+            border: "none",
+            borderRadius: 12,
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+        >
+          TUTUP
+        </button>
+      </div>
+    </div>
+  )}
+</main>
+```
+
+);
 }
