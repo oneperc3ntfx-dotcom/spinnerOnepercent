@@ -5,7 +5,7 @@ let participants = [];
 let forcedWinner = null;
 let rotation = 0;
 
-// ================= LOAD =================
+// ================= LOAD DATA =================
 async function loadData(){
 const res = await fetch("/participants");
 participants = await res.json();
@@ -13,7 +13,7 @@ drawWheel();
 renderList();
 }
 
-// ================= DRAW =================
+// ================= DRAW WHEEL =================
 function drawWheel(){
 ctx.clearRect(0,0,600,600);
 
@@ -32,7 +32,6 @@ ctx.save();
 ctx.translate(300,300);
 ctx.rotate(i*angle + angle/2);
 
-// TEXT LEBIH BESAR
 ctx.font = "bold 28px Arial";
 ctx.fillStyle = "#000";
 ctx.fillText(name,120,10);
@@ -40,6 +39,70 @@ ctx.fillText(name,120,10);
 ctx.restore();
 
 });
+}
+
+// ================= GET WINNER =================
+async function getWinner(){
+const res = await fetch("/winner");
+const data = await res.json();
+return data.forcedWinner;
+}
+
+// ================= SPIN FIX 100% LOCK TO WINNER =================
+async function spin(){
+
+const winner = await getWinner();
+
+if(!winner){
+alert("SET WINNER DULU DI ADMIN");
+return;
+}
+
+const index = participants.indexOf(winner);
+
+if(index === -1){
+alert("WINNER TIDAK ADA DI LIST");
+return;
+}
+
+const angle = 360 / participants.length;
+
+// 🎯 POSISI TENGAH SEGMENT WINNER
+const targetAngle = index * angle + angle / 2;
+
+// 🔥 TOTAL PUTARAN (BIAR DRAMA)
+const totalSpins = 10 * 360;
+
+// 🔥 HITUNG FINAL POSITION (FIX ABSOLUTE)
+const finalRotation = totalSpins + (360 - targetAngle);
+
+// ❗ PENTING: JANGAN += (INI PENYEBAB BUG KAMU SEBELUMNYA)
+rotation = finalRotation;
+
+// RESET BIAR ANIMASI CLEAN
+canvas.style.transition = "none";
+canvas.style.transform = "rotate(0deg)";
+
+// FORCE REFLOW (BIAR BROWSER RESET STATE)
+canvas.offsetHeight;
+
+// START ANIMATION 45 DETIK
+canvas.style.transition =
+"transform 45s cubic-bezier(0.05,0.9,0.1,1)";
+
+canvas.style.transform =
+`rotate(${rotation}deg)`;
+
+// SHOW WINNER AFTER FINISH
+setTimeout(()=>{
+showWinner(winner);
+},45000);
+}
+
+// ================= WINNER =================
+function showWinner(name){
+document.getElementById("winnerName").innerText = name;
+document.getElementById("winnerModal").style.display="flex";
 }
 
 // ================= ADD =================
@@ -58,7 +121,6 @@ loadData();
 
 // ================= DELETE =================
 async function remove(name){
-
 await fetch("/participants",{
 method:"DELETE",
 headers:{"Content-Type":"application/json"},
@@ -68,7 +130,7 @@ body:JSON.stringify({name})
 loadData();
 }
 
-// ================= RENDER =================
+// ================= RENDER LIST =================
 function renderList(){
 const list=document.getElementById("list");
 list.innerHTML="";
@@ -94,49 +156,6 @@ alert("WINNER SET: " + name);
 closeAdmin();
 }
 
-// ================= GET WINNER =================
-async function getWinner(){
-const res = await fetch("/winner");
-const data = await res.json();
-return data.forcedWinner;
-}
-
-// ================= SPIN 45 DETIK =================
-async function spin(){
-
-const winner = await getWinner();
-
-if(!winner){
-alert("SET WINNER DULU");
-return;
-}
-
-const index = participants.indexOf(winner);
-
-const angle = 360 / participants.length;
-
-const target =
-3600 + (360 - (index * angle) - angle/2);
-
-rotation += target;
-
-canvas.style.transition =
-"transform 45s cubic-bezier(0.05,0.9,0.1,1)";
-
-canvas.style.transform =
-`rotate(${rotation}deg)`;
-
-setTimeout(()=>{
-showWinner(winner);
-},45000);
-}
-
-// ================= WINNER =================
-function showWinner(name){
-document.getElementById("winnerName").innerText = name;
-document.getElementById("winnerModal").style.display="flex";
-}
-
 // ================= RESET =================
 async function resetAll(){
 await fetch("/reset",{method:"POST"});
@@ -156,4 +175,5 @@ document.getElementById("adminPanel").style.display="block";
 
 // ================= INIT =================
 document.getElementById("spinBtn").addEventListener("click",spin);
+
 loadData();
