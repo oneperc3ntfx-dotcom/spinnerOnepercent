@@ -47,7 +47,7 @@ const data = await res.json();
 return data.forcedWinner;
 }
 
-// ================= SPIN FINAL FIX =================
+// ================= SPIN FINAL FIX (100% ACCURATE) =================
 async function spin(){
 
 const winner = await getWinner();
@@ -66,17 +66,19 @@ return;
 
 const total = participants.length;
 
-// 🎯 1 slice derajat
+// 🎯 tiap segment
 const slice = 360 / total;
 
-// 🎯 posisi tengah winner
-const winnerAngle = index * slice + (slice / 2);
+// 🎯 center dari winner
+const winnerAngle = index * slice + slice / 2;
 
-// 🔥 KUNCI UTAMA:
-// kita paksa winner tepat di 0° (atas pointer)
-const finalRotation = (360 * 10) + (360 - winnerAngle);
+// 🚨 FIX PENTING: CANVAS START DI JAM 3, POINTER DI JAM 12
+const offsetFix = 90;
 
-// ❗ RESET STATE (ANTI BUG DRIFT)
+// 🎯 FINAL ROTATION (AKURAT 100%)
+const finalRotation = (360 * 10) + (360 - winnerAngle - offsetFix);
+
+// ❗ RESET STATE BIAR TIDAK DRIFT
 canvas.style.transition = "none";
 canvas.style.transform = "rotate(0deg)";
 canvas.getBoundingClientRect();
@@ -88,7 +90,7 @@ canvas.style.transition =
 canvas.style.transform =
 `rotate(${finalRotation}deg)`;
 
-// 🏆 SHOW WINNER
+// 🏆 SHOW WINNER AFTER STOP
 setTimeout(()=>{
 showWinner(winner);
 },45000);
@@ -126,7 +128,7 @@ body:JSON.stringify({name})
 loadData();
 }
 
-// ================= RENDER =================
+// ================= RENDER LIST =================
 function renderList(){
 const list=document.getElementById("list");
 list.innerHTML="";
