@@ -2,8 +2,9 @@ const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
 
 let participants = [];
+let secretClick = 0;
 
-// ================= LOAD DATA =================
+// ================= LOAD =================
 async function loadData(){
 const res = await fetch("/participants");
 participants = await res.json();
@@ -11,7 +12,7 @@ drawWheel();
 renderList();
 }
 
-// ================= DRAW WHEEL =================
+// ================= DRAW =================
 function drawWheel(){
 
 ctx.clearRect(0,0,600,600);
@@ -42,7 +43,7 @@ ctx.restore();
 });
 }
 
-// ================= GET WINNER =================
+// ================= WINNER =================
 async function getWinner(){
 const res = await fetch("/winner");
 const data = await res.json();
@@ -65,7 +66,7 @@ finalWinner = participants[randomIndex];
 const index = participants.indexOf(finalWinner);
 
 if(index === -1){
-alert("WINNER TIDAK ADA DI LIST");
+alert("WINNER TIDAK ADA");
 return;
 }
 
@@ -141,8 +142,7 @@ list.innerHTML+=`
 // ================= SET WINNER =================
 async function setWinner(){
 
-const input = document.getElementById("forceWinnerInput");
-const name = input.value.trim();
+const name = document.getElementById("forceWinnerInput").value.trim();
 
 await fetch("/winner",{
 method:"POST",
@@ -150,28 +150,36 @@ headers:{"Content-Type":"application/json"},
 body:JSON.stringify({name})
 });
 
-alert(name ? "WINNER SET: " + name : "MODE RANDOM");
+alert(name ? "WINNER LOCK: " + name : "RANDOM MODE");
 loadWinnerUI();
 }
 
-// ================= WINNER UI SYNC =================
+// ================= LOAD WINNER UI =================
 async function loadWinnerUI(){
 const res = await fetch("/winner");
 const data = await res.json();
 
-const input = document.getElementById("forceWinnerInput");
-
-input.value = data.forcedWinner || "";
+document.getElementById("forceWinnerInput").value = data.forcedWinner || "";
 }
 
-// ================= HIDE / SHOW PANEL =================
+// ================= HIDE SHOW =================
 function hideParticipants(){
-document.getElementById("participantsPanel").style.display = "none";
+document.getElementById("participantsPanel").style.display="none";
 }
 
 function showParticipants(){
-document.getElementById("participantsPanel").style.display = "block";
+document.getElementById("participantsPanel").style.display="block";
 }
+
+// ================= SECRET ADMIN CLICK =================
+document.getElementById("title").addEventListener("click",()=>{
+secretClick++;
+
+if(secretClick >= 7){
+document.getElementById("adminPanel").style.display="block";
+secretClick = 0;
+}
+});
 
 // ================= ADMIN =================
 function closeAdmin(){
