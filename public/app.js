@@ -8,14 +8,18 @@ JSON.parse(localStorage.getItem("participants")) || [
 
 let rotation = 0;
 
-// ================= PRIZE =================
+// ================= INIT =================
+drawWheel();
+renderList();
+
+// ================= SAVE PRIZE =================
 function savePrize(){
 const value = document.getElementById("prizeInput").value;
 localStorage.setItem("prize",value);
 document.getElementById("prizeTitle").innerText = value;
 }
 
-// ================= DRAW =================
+// ================= DRAW WHEEL =================
 function drawWheel(){
 ctx.clearRect(0,0,600,600);
 
@@ -43,7 +47,11 @@ ctx.restore();
 // ================= SPIN 45 DETIK =================
 function spin(){
 
-const winnerIndex = Math.floor(Math.random()*participants.length);
+if(participants.length === 0) return;
+
+const winnerIndex =
+Math.floor(Math.random()*participants.length);
+
 const angle = 360/participants.length;
 
 const target =
@@ -64,9 +72,12 @@ showWinner(participants[winnerIndex]);
 
 // ================= WINNER =================
 function showWinner(name){
+
 document.getElementById("winnerName").innerText = name;
+
 document.getElementById("modalPrize").innerText =
 document.getElementById("prizeTitle").innerText;
+
 document.getElementById("winnerModal").style.display="flex";
 }
 
@@ -101,11 +112,14 @@ drawWheel();
 renderList();
 }
 
-// ================= ADMIN =================
-document.addEventListener("keydown",(e)=>{
-if(e.ctrlKey && e.shiftKey && e.key==="A"){
-document.getElementById("adminPanel").style.display="block";
+// ================= ADMIN FIX (INI YANG BENAR) =================
+document.addEventListener("keydown", function(e){
+
+if(e.ctrlKey && e.shiftKey && e.code === "KeyA"){
+document.getElementById("adminPanel").style.display = "block";
+console.log("ADMIN OPEN");
 }
+
 });
 
 function closeAdmin(){
@@ -124,8 +138,5 @@ drawWheel();
 renderList();
 }
 
-// ================= INIT =================
+// ================= BUTTON =================
 document.getElementById("spinBtn").addEventListener("click",spin);
-
-drawWheel();
-renderList();
