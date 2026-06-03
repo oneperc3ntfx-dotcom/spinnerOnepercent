@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luxury Spinner</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -11,48 +12,56 @@
 
 <div class="container">
 
-<h1 id="title">LUXURY SPINNER</h1>
+  <h1 id="title">LUXURY SPINNER</h1>
 
-<div class="prize-box">
-<input id="prizeInput" placeholder="Nama Hadiah">
-<button onclick="savePrize()">SIMPAN</button>
+  <div class="prize-box">
+    <input id="prizeInput" placeholder="Nama Hadiah">
+    <button onclick="savePrize()">SIMPAN</button>
+  </div>
+
+  <h2 id="prizeTitle">HADIAH 1 JUTA</h2>
+
+  <div class="wheel-wrapper">
+    <div class="pointer"></div>
+    <canvas id="wheel" width="600" height="600"></canvas>
+  </div>
+
+  <button id="spinBtn">SPIN NOW</button>
+
 </div>
 
-<h2 id="prizeTitle">HADIAH</h2>
+<!-- PARTICIPANTS PANEL -->
+<div class="participants" id="participantsPanel">
 
-<div class="wheel-wrapper">
-<div class="pointer"></div>
-<canvas id="wheel" width="600" height="600"></canvas>
-</div>
+  <div style="display:flex; gap:5px; margin-bottom:10px;">
+    <button onclick="hideParticipants()" style="flex:1;">HIDE</button>
+    <button onclick="showParticipants()" style="flex:1;">SHOW</button>
+  </div>
 
-<button id="spinBtn">SPIN NOW</button>
-
-</div>
-
-<!-- PARTICIPANTS -->
-<div class="participants">
-<input id="nameInput" placeholder="Tambah peserta">
-<button onclick="addParticipant()">ADD</button>
-<ul id="list"></ul>
-</div>
-
-<!-- ADMIN -->
-<div id="adminPanel" class="admin-panel">
-
-<h2>ADMIN</h2>
-
-<input id="forceWinnerInput" placeholder="Set Pemenang">
-<button onclick="setWinner()">SET WINNER</button>
-
-<button onclick="resetAll()">RESET</button>
-
-<button onclick="closeAdmin()">CLOSE</button>
+  <input id="nameInput" placeholder="Tambah peserta">
+  <button onclick="addParticipant()">ADD</button>
+  <ul id="list"></ul>
 
 </div>
 
 <!-- WINNER -->
 <div id="winnerModal">
-<h1 id="winnerName"></h1>
+  <div class="modal-content">
+    <h3>🏆 PEMENANG</h3>
+    <h1 id="winnerName"></h1>
+    <button onclick="closeModal()">TUTUP</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" class="admin-panel">
+  <h2>ADMIN PANEL</h2>
+
+  <input id="forceWinnerInput" placeholder="Set Pemenang">
+  <button onclick="setWinner()">SET PEMENANG</button>
+
+  <button onclick="resetAll()">RESET</button>
+  <button onclick="closeAdmin()">CLOSE</button>
 </div>
 
 <script src="app.js"></script>
