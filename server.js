@@ -8,28 +8,24 @@ app.use(express.static("public"));
 let participants = ["ANDI","BUDI","SITI","RINA"];
 let forcedWinner = null;
 
-// ================= PUBLIC GET =================
+// ================= GET (PUBLIC) =================
 app.get("/participants",(req,res)=>{
 res.json(participants);
 });
 
-// ================= ADD PARTICIPANT =================
+// ================= ADD =================
 app.post("/participants",(req,res)=>{
 const name = req.body.name?.toUpperCase();
-
-if(name){
+if(name && !participants.includes(name)){
 participants.push(name);
 }
-
 res.json(participants);
 });
 
-// ================= DELETE PARTICIPANT =================
+// ================= DELETE =================
 app.delete("/participants",(req,res)=>{
 const name = req.body.name?.toUpperCase();
-
 participants = participants.filter(p => p !== name);
-
 res.json(participants);
 });
 
