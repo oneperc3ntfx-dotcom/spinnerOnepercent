@@ -4,11 +4,12 @@ const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
-// ================= DATA =================
 let participants = ["ANDI","BUDI","SITI","RINA"];
-let forcedWinner = null;
 
-// ================= GET (PUBLIC) =================
+// 🔥 WINNER STATE (EMPTY = RANDOM MODE)
+let forcedWinner = "";
+
+// ================= GET PARTICIPANTS =================
 app.get("/participants",(req,res)=>{
 res.json(participants);
 });
@@ -35,16 +36,25 @@ participants = [];
 res.json(participants);
 });
 
-// ================= WINNER =================
+// ================= SET WINNER =================
 app.post("/winner",(req,res)=>{
-forcedWinner = req.body.name?.toUpperCase();
+const name = req.body.name;
+
+// 🔥 KUNCI LOGIC:
+// kosong "" = random mode
+if(!name || name.trim() === ""){
+forcedWinner = "";
+}else{
+forcedWinner = name.toUpperCase();
+}
+
 res.json({forcedWinner});
 });
 
+// ================= GET WINNER =================
 app.get("/winner",(req,res)=>{
 res.json({forcedWinner});
 });
 
-// ================= SERVER =================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, ()=>console.log("SERVER RUNNING"));
+app.listen(PORT,()=>console.log("RUNNING"));
